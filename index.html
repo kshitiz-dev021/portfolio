@@ -118,16 +118,15 @@
           <a href="mailto:kshitizbaral1234@gmail.com" class="text-blue-500"
             >Secure Contact</a
           >
-            <div
-          class="inline-flex items-center gap-2 px-3 py-1 rounded-md border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 text-[10px] mono "
-        >
-          <span
-            class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"
-          ></span>
-          SECURE_CONNECTION: ESTABLISHED
+          <div
+            class="inline-flex items-center gap-2 px-3 py-1 rounded-md border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 text-[10px] mono"
+          >
+            <span
+              class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"
+            ></span>
+            SECURE_CONNECTION: ESTABLISHED
+          </div>
         </div>
-        </div>
-      
       </div>
     </nav>
 
@@ -266,7 +265,6 @@
             id="terminal-input"
             class="bg-transparent border-none outline-none text-white w-full mono focus:ring-0"
             placeholder="..."
-            autofocus
           />
         </div>
       </div>
@@ -284,13 +282,13 @@
 
       // Add new commands to your existing object
       const responses = {
-        help: "Commands: [about, skills, dream, contact, scan, sudo, clear]",
+        help: "Commands: [about, skills, dream, contact, scan, date, sudo, clear]",
         about:
           "Kshitiz. Developer. Focusing on defensive security and clean UI.",
         skills:
           "Primary: Tailwind CSS, JS (ES6), HTML5. Learning: Network Security.",
         dream: "Current Mission: Transitioning to Cybersecurity Professional.",
-        contact: "Reach out: kshitiz@example.com",
+        contact: "Reach out: kshitizbaral1234@gmail.com",
         sudo: "Nice try. This incident will be reported to the high table. 😉",
         clear: "CLEAR",
       };
@@ -316,6 +314,16 @@
             } catch (err) {
               content.innerHTML += `<div class="text-red-500">>> Error: Firewall blocked trace.</div>`;
             }
+          }
+          else if (cmd === "date") {
+            // 1. Get the current date and time from the browser
+            const now = new Date().toLocaleString();
+
+            // 2. Add the user's input line to the terminal
+            content.innerHTML += `<div class="mt-2 text-white"><span class="text-blue-500">guest$</span> ${input.value}</div>`;
+
+            // 3. Print the actual date/time
+            content.innerHTML += `<div class="text-yellow-400">>> Current System Time: ${now}</div>`;
           }
           // 3. Handle standard commands
           else if (cmd !== "") {
