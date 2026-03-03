@@ -1,286 +1,204 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KSHITIZ | OSINT & RED TEAM</title>
-  
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;800&display=swap" rel="stylesheet">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kshitiz | Red Team Operator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <style>
+      :root { --accent: #3b82f6; --danger: #ef4444; --success: #10b981; }
+      body { font-family: "Inter", sans-serif; background-color: #050505; cursor: none; overflow-x: hidden; color: #d1d5db; min-height: 100vh; }
+      .mono { font-family: "JetBrains Mono", monospace; }
 
-  <style>
-    :root {
-      --accent: #00f2ff;
-      --accent-glow: rgba(0, 242, 255, 0.5);
-      --bg: #050505;
-    }
+      /* Dynamic Grid */
+      .grid-bg {
+        position: fixed; inset: 0; z-index: -1;
+        background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+        background-size: 40px 40px;
+        mask-image: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), black 0%, transparent 80%);
+        pointer-events: none;
+      }
 
-    * {
-      cursor: none !important;
-      -webkit-font-smoothing: antialiased;
-    }
+      /* Fixed Cursor */
+      #cursor {
+        width: 20px; height: 20px; border: 1.5px solid var(--accent); border-radius: 50%;
+        position: fixed; pointer-events: none; z-index: 10000;
+        display: flex; align-items: center; justify-content: center;
+        transition: transform 0.1s ease-out, width 0.3s, height 0.3s, border-color 0.3s;
+        transform: translate(-50%, -50%);
+        left: -100px;
+      }
+      #cursor::after { content: ""; width: 4px; height: 4px; background: var(--accent); border-radius: 50%; }
+      .cursor-hover { width: 45px !important; height: 45px !important; border-color: var(--success) !important; background: rgba(16, 185, 129, 0.1); }
 
-    body {
-      background-color: var(--bg);
-      color: #fafafa;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      overflow-x: hidden;
-    }
+      /* Bento Cards */
+      .bento-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(20px);
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+      .bento-card:hover { border-color: var(--accent); transform: translateY(-5px); background: rgba(59, 130, 246, 0.05); }
+      
+      /* Success Pulse Animation */
+      .pulse-success { animation: success-glow 1.5s ease-out; }
+      @keyframes success-glow {
+        0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); border-color: var(--success); }
+        100% { box-shadow: 0 0 40px 20px rgba(16, 185, 129, 0); border-color: rgba(255, 255, 255, 0.08); }
+      }
 
-    .mono { font-family: 'JetBrains Mono', monospace; }
+      #terminal-input { caret-color: var(--accent); }
+      #terminal-content::-webkit-scrollbar { width: 4px; }
+      #terminal-content::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+    </style>
+  </head>
+  <body>
+    <div id="cursor"></div>
+    <div class="grid-bg" id="grid"></div>
 
-    /* --- Cyber Grid Background --- */
-    .grid-bg {
-      position: fixed;
-      inset: 0;
-      background-image: 
-        linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
-      background-size: 50px 50px;
-      mask-image: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), black 0%, transparent 80%);
-      z-index: -1;
-    }
-
-    /* --- Advanced Cursor System --- */
-    #cursor-dot {
-      width: 8px; height: 8px; background: var(--accent);
-      position: fixed; border-radius: 50%; pointer-events: none; z-index: 9999;
-      transition: transform 0.1s ease;
-    }
-    #cursor-outline {
-      width: 40px; height: 40px; border: 1px solid var(--accent);
-      position: fixed; border-radius: 50%; pointer-events: none; z-index: 9998;
-      transition: transform 0.2s ease-out, opacity 0.3s;
-    }
-
-    /* --- Glitch Effect --- */
-    .glitch {
-      position: relative;
-      animation: glitch 3s infinite;
-    }
-    @keyframes glitch {
-      0% { text-shadow: 2px 0 red, -2px 0 blue; }
-      2% { text-shadow: -2px 0 red, 2px 0 blue; }
-      4% { text-shadow: 2px 0 red, -2px 0 blue; }
-      6% { text-shadow: 0 0 white; }
-    }
-
-    /* --- Glassmorphism Card --- */
-    .glass-card {
-      background: rgba(255, 255, 255, 0.03);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    .glass-card:hover {
-      background: rgba(255, 255, 255, 0.06);
-      border-color: var(--accent);
-      transform: translateY(-10px) scale(1.02);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 20px var(--accent-glow);
-    }
-
-    /* --- Terminal Styling --- */
-    #terminal-body::-webkit-scrollbar { width: 4px; }
-    #terminal-body::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
-
-    /* --- Mobile Fixes --- */
-    @media (max-width: 768px) {
-      * { cursor: auto !important; }
-      #cursor-dot, #cursor-outline { display: none; }
-      .grid-bg { mask-image: none; opacity: 0.3; }
-    }
-  </style>
-</head>
-<body>
-
-  <div class="grid-bg" id="grid"></div>
-  <div id="cursor-dot"></div>
-  <div id="cursor-outline"></div>
-
-  <nav class="fixed top-0 w-full z-50 p-6 flex justify-between items-center mix-blend-difference">
-    <div class="text-2xl font-black tracking-tighter mono italic text-white">
-      KSHITIZ<span class="text-[var(--accent)]">_</span>
-    </div>
-    <div class="flex gap-8 mono text-xs uppercase font-bold tracking-widest text-zinc-400">
-      <a href="#work" class="hover:text-[var(--accent)] transition">Exp</a>
-      <a href="#terminal" class="hover:text-[var(--accent)] transition">Root</a>
-    </div>
-  </nav>
-
-  <section class="h-screen flex flex-col justify-center items-center px-6 relative overflow-hidden">
-    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-[var(--accent)] opacity-10 blur-[120px] rounded-full pointer-events-none"></div>
-    
-    <div class="text-center z-10">
-      <p class="mono text-[var(--accent)] text-xs mb-4 tracking-[0.5em] font-bold uppercase">Red Team Operator // 0x41</p>
-      <h1 class="text-7xl md:text-9xl font-black mb-6 tracking-tighter glitch uppercase italic">
-        Weaponized<br><span class="text-transparent border-t-2 border-b-2 border-white/20 px-4" style="-webkit-text-stroke: 1px white;">Code</span>
-      </h1>
-      <p class="max-w-xl mx-auto text-zinc-400 text-sm md:text-base leading-relaxed mb-10 px-4">
-        Specializing in offensive security, advanced XSS chains, and frontend-to-backend persistence. Turning pixels into points of entry.
-      </p>
-      <div class="flex flex-wrap justify-center gap-4">
-        <a href="#terminal" class="bg-white text-black px-8 py-4 font-bold rounded-full hover:scale-105 transition active:scale-95">ESTABLISH_SHELL</a>
-        <a href="mailto:kshitizbaral1234@gmail.com" class="glass-card px-8 py-4 font-bold rounded-full">CONTACT_OPS</a>
-      </div>
-    </div>
-  </section>
-
-  <section id="work" class="max-w-7xl mx-auto px-6 py-32">
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <div class="glass-card p-8 md:col-span-2 rounded-3xl">
-        <div class="text-[var(--accent)] mono mb-4 text-xs font-bold">[01]</div>
-        <h3 class="text-3xl font-black mb-4 uppercase">Exploit Engineering</h3>
-        <p class="text-zinc-500 text-sm">Crafting custom payloads that bypass WAF and EDR by leveraging non-standard JS behaviors.</p>
-      </div>
-      <div class="glass-card p-8 rounded-3xl flex flex-col justify-center">
-        <div class="text-5xl font-black italic mb-2">99%</div>
-        <div class="mono text-xs text-zinc-500 uppercase">Detection Bypass Rate</div>
-      </div>
-      <div class="glass-card p-8 rounded-3xl bg-[var(--accent)] !text-black flex flex-col justify-center">
-        <h3 class="text-xl font-black uppercase">Active Recon</h3>
-        <p class="text-xs font-bold opacity-80">Mapping attack surfaces in real-time.</p>
-      </div>
-    </div>
-  </section>
-
-  <section id="terminal" class="max-w-5xl mx-auto px-6 py-32">
-    <div class="glass-card rounded-2xl overflow-hidden shadow-2xl border-white/5">
-      <div class="bg-white/5 p-4 flex items-center justify-between border-b border-white/5">
-        <div class="flex gap-2">
-          <div class="w-3 h-3 rounded-full bg-red-500"></div>
-          <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-          <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+    <nav class="sticky top-0 z-50 border-b border-white/10 bg-black/70 backdrop-blur-2xl px-6 h-16 flex items-center justify-between">
+      <div class="mono text-white font-bold text-2xl">KSHITIZ<span class="text-blue-400">.red</span></div>
+      <div class="hidden md:flex gap-8 text-xs uppercase tracking-widest font-semibold items-center">
+        <a href="#work" class="hover:text-blue-400 transition">Works</a>
+        <a href="#terminal" class="hover:text-blue-400 transition">Terminal</a>
+        <div class="px-4 py-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs mono">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse mr-2"></span>SECURE_SESSION
         </div>
-        <div class="mono text-[10px] text-zinc-500 font-bold uppercase tracking-widest">secure_ssh_session_v3</div>
       </div>
-      <div id="terminal-body" class="p-8 h-[450px] overflow-y-auto mono text-sm leading-relaxed space-y-3">
-        <div class="text-zinc-500 italic">Connecting to relay server... [DONE]</div>
-        <div class="text-emerald-400">Authenticated: kshitiz@operator</div>
-        <div class="text-zinc-400">Type 'help' for available payloads.</div>
+    </nav>
+
+    <section class="max-w-5xl mx-auto px-6 pt-24 pb-20 text-center">
+      <div class="inline-block px-6 py-2 rounded-full border-2 border-blue-500/30 bg-blue-500/10 text-blue-400 text-xs uppercase tracking-[0.3em] font-bold mb-12">Red Team Operator</div>
+      <h1 class="text-7xl md:text-8xl font-black text-white leading-tight mb-8">Breach. Exploit.<br /><span class="text-blue-400 font-mono tracking-widest">SECURE.</span></h1>
+    </section>
+
+    <section id="work" class="max-w-7xl mx-auto px-6 py-12">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 auto-rows-[200px]">
+        <div class="bento-card md:col-span-2 md:row-span-2 rounded-3xl p-12 flex flex-col justify-end">
+          <span class="text-blue-500 mono text-sm font-bold mb-4">RED TEAM OPS</span>
+          <h3 class="text-4xl font-black text-white mb-4">Weaponized Interfaces</h3>
+          <p class="text-gray-400">Building <span class="text-white">CSP bypasses</span> and <span class="text-red-400">RCE chains</span>.</p>
+        </div>
+        <div class="bento-card md:col-span-2 rounded-3xl p-10 flex items-center border-l-4 border-l-blue-600">
+          <h3 class="text-2xl font-black text-white">Exploit Dev</h3>
+        </div>
+        <div class="bento-card rounded-3xl p-8 flex flex-col justify-center text-center">
+            <div class="text-xs text-emerald-500 mono mb-2 uppercase">Weaponry</div>
+            <div class="text-white font-bold">Burp • Nmap • Nuclei</div>
+        </div>
+        <div class="bento-card rounded-3xl p-8 flex items-center justify-center font-black text-xl hover:text-white transition-colors">
+            <a href="#">GITHUB ↗</a>
+        </div>
       </div>
-      <div class="p-6 border-t border-white/5 bg-black/40 flex items-center gap-3">
-        <span class="text-[var(--accent)] font-bold">λ</span>
-        <input type="text" id="terminal-input" class="bg-transparent border-none outline-none flex-1 text-white mono placeholder-zinc-700" placeholder="awaiting command..." autofocus>
+    </section>
+
+    <section id="terminal" class="max-w-4xl mx-auto px-6 py-24">
+      <div class="w-full rounded-3xl border-2 border-white/15 bg-black overflow-hidden shadow-2xl">
+        <div class="bg-gray-900/50 px-6 py-4 flex items-center justify-between border-b border-white/10">
+          <div class="flex gap-2"><div class="w-3 h-3 rounded-full bg-red-500/40"></div><div class="w-3 h-3 rounded-full bg-yellow-500/40"></div><div class="w-3 h-3 rounded-full bg-green-500/40"></div></div>
+          <span class="text-xs mono text-gray-500">kshitiz@redteam:~$</span>
+        </div>
+        <div id="terminal-content" class="p-8 h-80 overflow-y-auto font-mono text-sm leading-relaxed bg-black/20">
+          <div class="text-blue-500">λ Initializing Red Team Environment...</div>
+          <div class="text-emerald-500">λ Access Granted. Welcome Operator.</div>
+          <div class="text-gray-500 text-xs mt-4">[Commands: 'nmap', 'hack', 'help', 'clear']</div>
+        </div>
+        <div class="p-6 bg-black/40 flex gap-4 border-t border-white/10">
+          <span class="text-blue-500 mono font-black">λ</span>
+          <input type="text" id="terminal-input" class="bg-transparent border-none outline-none text-white w-full mono" placeholder="execute command..." autocomplete="off" />
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <footer class="py-20 text-center mono text-[10px] tracking-[0.4em] text-zinc-600">
-    &copy; 2026 KSHITIZ // ENCRYPTED_COMMUNICATION_ONLY
-  </footer>
+    <script>
+      const input = document.getElementById("terminal-input");
+      const content = document.getElementById("terminal-content");
+      const cursor = document.getElementById("cursor");
+      const grid = document.getElementById("grid");
+      let isProcessing = false;
 
-  <script>
-    // --- High Performance Cursor ---
-    const dot = document.getElementById('cursor-dot');
-    const outline = document.getElementById('cursor-outline');
-    const grid = document.getElementById('grid');
-
-    window.addEventListener('mousemove', (e) => {
-      const { clientX, clientY } = e;
-      
-      // Update Grid Mask
-      grid.style.setProperty('--mouse-x', `${clientX}px`);
-      grid.style.setProperty('--mouse-y', `${clientY}px`);
-
-      // Animate Cursor
-      dot.style.left = `${clientX}px`;
-      dot.style.top = `${clientY}px`;
-      
-      outline.animate({
-        left: `${clientX}px`,
-        top: `${clientY}px`
-      }, { duration: 400, fill: "forwards" });
-    });
-
-    // Hover effects for cursor
-    document.querySelectorAll('a, button, input, .glass-card').forEach(link => {
-      link.addEventListener('mouseenter', () => {
-        outline.style.transform = 'translate(-50%, -50%) scale(1.5)';
-        outline.style.background = 'var(--accent-glow)';
-        outline.style.border = 'none';
+      // Mouse Movements
+      window.addEventListener("mousemove", (e) => {
+        cursor.style.left = e.clientX + "px";
+        cursor.style.top = e.clientY + "px";
+        grid.style.setProperty('--mx', e.clientX + "px");
+        grid.style.setProperty('--my', e.clientY + "px");
       });
-      link.addEventListener('mouseleave', () => {
-        outline.style.transform = 'translate(-50%, -50%) scale(1)';
-        outline.style.background = 'none';
-        outline.style.border = '1px solid var(--accent)';
+
+      // Hover Scaling
+      document.querySelectorAll('.bento-card, a, input').forEach(el => {
+        el.addEventListener('mouseenter', () => cursor.classList.add('cursor-hover'));
+        el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-hover'));
       });
-    });
 
-    // --- Terminal Logic ---
-    const terminalBody = document.getElementById('terminal-body');
-    const terminalInput = document.getElementById('terminal-input');
+      async function runProgress(taskName, finalMessage) {
+        isProcessing = true;
+        input.disabled = true;
+        const div = document.createElement("div");
+        div.className = "mt-2 text-yellow-500";
+        content.appendChild(div);
+        
+        for (let i = 0; i <= 100; i += 10) {
+          const bar = "█".repeat(i / 10) + "░".repeat(10 - (i / 10));
+          div.innerHTML = `${taskName} [${bar}] ${i}%`;
+          content.scrollTop = content.scrollHeight;
+          await new Promise(r => setTimeout(r, 100));
+        }
+        
+        div.innerHTML = `<span class="text-emerald-500">${finalMessage}</span>`;
+        if (taskName.includes("EDR")) {
+            document.querySelectorAll('.bento-card').forEach(c => {
+                c.classList.add('pulse-success');
+                setTimeout(() => c.classList.remove('pulse-success'), 1500);
+            });
+        }
+        input.disabled = false;
+        isProcessing = false;
+        input.focus();
+      }
 
-    const typeWriter = (text, colorClass = "text-zinc-300") => {
-      const div = document.createElement('div');
-      div.className = colorClass;
-      terminalBody.appendChild(div);
-      
-      let i = 0;
-      return new Promise(resolve => {
-        const interval = setInterval(() => {
-          div.innerHTML += text.charAt(i);
-          i++;
-          if (i >= text.length) {
-            clearInterval(interval);
-            terminalBody.scrollTop = terminalBody.scrollHeight;
-            resolve();
+      const responses = {
+        help: "available: about, skills, nmap, hack, clear",
+        about: "Red Team Operator focusing on offensive frontend exploits.",
+        skills: "Burp, Nuclei, JS Payloads, Metasploit."
+      };
+
+      input.addEventListener("keydown", async (e) => {
+        if (e.key === "Enter" && !isProcessing) {
+          const cmd = input.value.toLowerCase().trim();
+          input.value = "";
+          
+          if (!cmd) return;
+
+          const line = document.createElement("div");
+          line.className = "mt-4 text-white";
+          line.innerHTML = `<span class="text-blue-500 font-bold">λ</span> ${cmd}`;
+          content.appendChild(line);
+
+          if (cmd === "nmap") {
+            await runProgress("SCANNING TARGETS", "[+] Discovery Complete: 2 Vulnerable Hosts Found.");
+          } else if (cmd === "hack") {
+            await runProgress("BYPASSING EDR", "[!] SYSTEM PWNED. PERSISTENCE DEPLOYED.");
+          } else if (cmd === "clear") {
+            content.innerHTML = '<div class="text-gray-500 text-xs">Terminal cleared.</div>';
+          } else if (responses[cmd]) {
+            const res = document.createElement("div");
+            res.className = "text-gray-400 mt-1";
+            res.innerHTML = responses[cmd];
+            content.appendChild(res);
+          } else {
+            const err = document.createElement("div");
+            err.className = "text-red-400 mt-1";
+            err.innerHTML = `Command not found: ${cmd}`;
+            content.appendChild(err);
           }
-        }, 15);
+          content.scrollTop = content.scrollHeight;
+        }
       });
-    };
 
-    const commands = {
-      help: async () => {
-        await typeWriter("Available payloads:", "text-yellow-400");
-        await typeWriter("> whoami - Display operator ID");
-        await typeWriter("> scan - Perform remote IP audit");
-        await typeWriter("> exploit - Execute XSS reverse shell");
-        await typeWriter("> clear - Wipe session buffer");
-      },
-      whoami: async () => {
-        await typeWriter("Identity: Kshitiz [UID: 0]", "text-emerald-400");
-        await typeWriter("Role: Senior Red Team Operator / Security Consultant");
-      },
-      scan: async () => {
-        await typeWriter("Scanning for local vulnerabilities...", "text-zinc-500 italic");
-        try {
-          const res = await fetch('https://api.ipify.org?format=json');
-          const data = await res.json();
-          await typeWriter(`[+] Found Public Gateway: ${data.ip}`, "text-white font-bold");
-          await typeWriter("[+] Open Ports: 80, 443, 8080, 22", "text-emerald-400");
-        } catch {
-          await typeWriter("[!] Proxy connection failed.", "text-red-500");
-        }
-      },
-      exploit: async () => {
-        await typeWriter("Injecting payload...", "text-red-500 blink");
-        await new Promise(r => setTimeout(r, 1000));
-        await typeWriter("SUCCESS: Shell established at 127.0.0.1:4444", "text-black bg-emerald-400 font-bold px-2");
-      },
-      clear: () => {
-        terminalBody.innerHTML = '';
-        return null;
-      }
-    };
-
-    terminalInput.addEventListener('keydown', async (e) => {
-      if (e.key === 'Enter') {
-        const input = terminalInput.value.trim().toLowerCase();
-        terminalInput.value = '';
-
-        const line = document.createElement('div');
-        line.innerHTML = `<span class="text-[var(--accent)]">λ</span> ${input}`;
-        terminalBody.appendChild(line);
-
-        if (commands[input]) {
-          await commands[input]();
-        } else if (input !== '') {
-          await typeWriter(`[!] ERROR: Command '${input}' not recognized by kernel.`, "text-red-500");
-        }
-        terminalBody.scrollTop = terminalBody.scrollHeight;
-      }
-    });
-
-  </script>
-</body>
+      // Keep focus on terminal clicks
+      document.getElementById('terminal').onclick = () => input.focus();
+    </script>
+  </body>
 </html>
