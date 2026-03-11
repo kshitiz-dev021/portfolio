@@ -3,228 +3,347 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Kshitiz | Red Team Operator</title>
+    <title>Kshitiz | Developer & Cyber Enthusiast</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
     <style>
-      :root { --accent: #3b82f6; --danger: #ef4444; --success: #10b981; }
-      body { font-family: "Inter", sans-serif; background-color: #050505; cursor: crosshair; overflow-x: hidden; color: #d1d5db; min-height: 100vh; }
-      .mono { font-family: "JetBrains Mono", monospace; }
+      :root {
+        --accent: #3b82f6;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #050505;
+        cursor: none;
+      }
+      .mono {
+        font-family: "Fira Code", monospace;
+      }
 
+      /* Langbase Grid Effect */
       .grid-bg {
-        position: fixed; inset: 0; z-index: -1;
-        background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+        background-image: linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0.05) 1px,
+            transparent 1px
+          ),
+          linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0.05) 1px,
+            transparent 1px
+          );
         background-size: 40px 40px;
-        mask-image: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), black 0%, transparent 80%);
-        pointer-events: none;
+        mask-image: radial-gradient(
+          ellipse 60% 50% at 50% 0%,
+          #000 70%,
+          transparent 100%
+        );
       }
 
+      /* Custom Cyber Cursor */
       #cursor {
-        width: 20px; height: 20px; border: 1.5px solid var(--accent); border-radius: 50%;
-        position: fixed; pointer-events: none; z-index: 10000;
-        display: flex; align-items: center; justify-content: center;
-        transition: transform 0.1s ease-out, width 0.3s, height 0.3s, border-color 0.3s;
-        transform: translate(-50%, -50%); left: -100px;
+        width: 20px;
+        height: 20px;
+        border: 1px solid var(--accent);
+        border-radius: 50%;
+        position: fixed;
+        pointer-events: none;
+        z-index: 9999;
+        transition: transform 0.1s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
-      #cursor::after { content: ""; width: 4px; height: 4px; background: var(--accent); border-radius: 50%; }
-      .cursor-hover { width: 45px !important; height: 45px !important; border-color: var(--success) !important; background: rgba(16, 185, 129, 0.1); }
+      #cursor::after {
+        content: "";
+        width: 2px;
+        height: 2px;
+        background: var(--accent);
+        border-radius: 50%;
+      }
 
+      /* Bento Styling */
       .bento-card {
         background: rgba(255, 255, 255, 0.02);
         border: 1px solid rgba(255, 255, 255, 0.08);
-        backdrop-filter: blur(20px);
+        backdrop-filter: blur(10px);
         transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
       }
-      .bento-card:hover { border-color: var(--accent); transform: translateY(-5px); background: rgba(59, 130, 246, 0.05); }
-      
-      .pulse-success { animation: success-glow 1.5s ease-out; }
-      @keyframes success-glow {
-        0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); border-color: var(--success); }
-        100% { box-shadow: 0 0 40px 20px rgba(16, 185, 129, 0); border-color: rgba(255, 255, 255, 0.08); }
+      .bento-card:hover {
+        border-color: var(--accent);
+        background: rgba(59, 130, 246, 0.05);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.2);
       }
 
-      #terminal-content::-webkit-scrollbar { width: 4px; }
-      #terminal-content::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-      input:focus { outline: none; }
+      /* Scrollbar */
+      ::-webkit-scrollbar {
+        width: 5px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #050505;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #222;
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--accent);
+      }
     </style>
   </head>
-  <body>
-    <div id="cursor" class="hidden md:flex"></div>
-    <div class="grid-bg" id="grid"></div>
+  <body class="text-gray-300 selection:bg-blue-500/30 overflow-x-hidden">
+    <div id="cursor"></div>
 
-    <nav class="sticky top-0 z-50 border-b border-white/10 bg-black/70 backdrop-blur-2xl px-6 h-16 flex items-center justify-between">
-      <div class="mono text-white font-bold text-2xl">KSHITIZ<span class="text-blue-400">.red</span></div>
-      <div class="hidden md:flex gap-8 text-xs uppercase tracking-widest font-semibold items-center">
-        <a href="#work" class="hover:text-blue-400 transition">Works</a>
-        <a href="#terminal" class="hover:text-blue-400 transition">Terminal</a>
-        <div class="text-emerald-500 text-[10px] mono animate-pulse">● C2_LISTENER_ACTIVE</div>
+    <div class="fixed inset-0 grid-bg -z-10"></div>
+
+    <nav
+      class="sticky top-0 z-50 border-b border-white/5 bg-black/60 backdrop-blur-xl"
+    >
+      <div
+        class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between"
+      >
+        <div class="mono text-white font-bold text-xl tracking-tighter">
+          KSHITIZ<span class="text-blue-500 underline">.sh</span>
+        </div>
+        <div
+          class="hidden md:flex gap-8 text-xs uppercase tracking-widest font-semibold items-center"
+        >
+          <a href="#work" class="hover:text-blue-400 transition">Works</a>
+          <a href="#terminal" class="hover:text-blue-400 transition"
+            >Terminal</a
+          >
+          <a href="mailto:kshitizbaral1234@gmail.com" class="text-blue-500"
+            >Secure Contact</a
+          >
+          <div
+            class="inline-flex items-center gap-2 px-3 py-1 rounded-md border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 text-[10px] mono"
+          >
+            <span
+              class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"
+            ></span>
+            SECURE_CONNECTION: ESTABLISHED
+          </div>
+        </div>
       </div>
     </nav>
 
-    <section class="max-w-5xl mx-auto px-6 pt-24 pb-20 text-center">
-      <div class="inline-block px-6 py-2 rounded-full border-2 border-blue-500/30 bg-blue-500/10 text-blue-400 text-xs uppercase tracking-[0.3em] font-bold mb-12">Red Team Operator</div>
-      <h1 class="text-6xl md:text-8xl font-black text-white leading-tight mb-8">Breach. Exploit.<br /><span class="text-blue-400 font-mono tracking-widest">SECURE.</span></h1>
-    </section>
-
-    <section id="work" class="max-w-7xl mx-auto px-6 py-12">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 auto-rows-[200px]">
-        <div class="bento-card md:col-span-2 md:row-span-2 rounded-3xl p-12 flex flex-col justify-end">
-          <span class="text-blue-500 mono text-sm font-bold mb-4">RED TEAM OPS</span>
-          <h3 class="text-4xl font-black text-white mb-4">Weaponized Interfaces</h3>
-          <p class="text-gray-400">Building <span class="text-white">CSP bypasses</span> and <span class="text-red-400">RCE chains</span>.</p>
+    <section class="max-w-5xl mx-auto px-6 pt-32 pb-20">
+      <div class="flex flex-col items-center text-center">
+        <div
+          class="px-4 py-1 rounded-full border border-blue-500/20 bg-blue-500/5 text-blue-400 text-[10px] uppercase tracking-[0.2em] font-bold mb-8"
+        >
+          Frontend Developer • Future Cyber Ops
         </div>
-        <div class="bento-card md:col-span-2 rounded-3xl p-10 flex items-center border-l-4 border-l-blue-600">
-          <h3 class="text-2xl font-black text-white">Exploit Dev</h3>
-        </div>
-        <div class="bento-card rounded-3xl p-8 flex flex-col justify-center text-center">
-            <div class="text-xs text-emerald-500 mono mb-2 uppercase">Weaponry</div>
-            <div class="text-white font-bold">Burp • Nmap • Nuclei</div>
-        </div>
-        <div class="bento-card rounded-3xl p-8 flex items-center justify-center font-black text-xl hover:text-white transition-colors">
-            <a href="#">GITHUB ↗</a>
-        </div>
+        <h1
+          class="text-6xl md:text-8xl font-bold text-white tracking-tighter leading-[0.9] mb-8"
+        >
+          I build code that<br />
+          <span
+            class="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-cyan-400"
+            >stays resilient.</span
+          >
+        </h1>
+        <p class="text-lg text-gray-400 max-w-xl mb-10 leading-relaxed">
+          Expert in <span class="text-white">Tailwind & JavaScript</span>.
+          Currently deciphering the world of
+          <span class="text-white underline decoration-blue-500"
+            >Cybersecurity</span
+          >
+          one packet at a time.
+        </p>
       </div>
     </section>
 
-    <section id="terminal" class="max-w-4xl mx-auto px-6 py-24">
-      <div class="w-full rounded-3xl border-2 border-white/15 bg-black overflow-hidden shadow-2xl">
-        <div class="bg-gray-900/50 px-6 py-4 flex items-center justify-between border-b border-white/10">
-          <div class="flex gap-2">
-            <div class="w-3 h-3 rounded-full bg-red-500/40"></div>
-            <div class="w-3 h-3 rounded-full bg-yellow-500/40"></div>
-            <div class="w-3 h-3 rounded-full bg-green-500/40"></div>
+    <section id="work" class="max-w-6xl mx-auto px-6 py-20">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 auto-rows-[180px]">
+        <div
+          class="bento-card md:col-span-2 md:row-span-2 rounded-3xl p-10 flex flex-col justify-end relative overflow-hidden group"
+        >
+          <div
+            class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-30 transition-opacity"
+          >
+            <svg
+              width="120"
+              height="120"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1"
+            >
+              <path
+                d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+              />
+            </svg>
           </div>
-          <span class="text-[10px] md:text-xs mono text-gray-500 uppercase">session_id: kshitiz_0x1</span>
+          <span class="text-blue-500 mono mb-2">01. Web Engineering</span>
+          <h3 class="text-3xl font-bold text-white mb-4">
+            Scalable Interfaces
+          </h3>
+          <p class="text-gray-400">
+            Deep knowledge in building responsive architectures using HTML, CSS,
+            and modern JS frameworks.
+          </p>
         </div>
-        <div id="terminal-content" class="p-8 h-80 overflow-y-auto font-mono text-sm leading-relaxed bg-black/20">
-          <div class="text-blue-500">λ Initializing Red Team Environment...</div>
-          <div class="text-emerald-500">λ Access Granted. Welcome Operator.</div>
-          <div class="text-gray-500 text-xs mt-4">[Commands: 'nmap', 'hack', 'c2 [key]', 'clear']</div>
+
+        <div
+          class="bento-card md:col-span-2 rounded-3xl p-8 flex items-center justify-between border-l-4 border-l-blue-600"
+        >
+          <div>
+            <h3 class="text-xl font-bold text-white tracking-tight">
+              Vulnerability Research
+            </h3>
+            <p class="text-sm text-gray-500 mt-1">Dream: Red Team Operations</p>
+          </div>
+          <div
+            class="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500"
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+          </div>
         </div>
-        <div class="p-6 bg-black/40 flex gap-4 border-t border-white/10">
-          <span class="text-blue-500 mono font-black">λ</span>
-          <input type="text" id="terminal-input" class="bg-transparent border-none outline-none text-white w-full mono" placeholder="execute command..." autocomplete="off" />
+
+        <div
+          class="bento-card rounded-3xl p-6 flex flex-col justify-center text-center"
+        >
+          <div class="text-xs text-blue-500 mono mb-2">STACK</div>
+          <div class="text-lg font-bold text-white">JS / Tailwind</div>
+        </div>
+
+        <div
+          class="bento-card rounded-3xl p-6 flex flex-col justify-center text-center hover:bg-blue-600 group"
+        >
+          <a href="#" class="group-hover:text-white font-bold transition"
+            >GitHub ↗</a
+          >
         </div>
       </div>
     </section>
+
+    <section id="terminal" class="max-w-4xl mx-auto px-6 py-20">
+      <div
+        class="w-full rounded-2xl border border-white/10 bg-[#0a0a0a] shadow-2xl overflow-hidden shadow-blue-500/5"
+      >
+        <div
+          class="bg-white/5 px-4 py-3 flex items-center justify-between border-b border-white/5"
+        >
+          <div class="flex gap-2">
+            <div class="w-3 h-3 rounded-full bg-red-500/20"></div>
+            <div class="w-3 h-3 rounded-full bg-yellow-500/20"></div>
+            <div class="w-3 h-3 rounded-full bg-green-500/20"></div>
+          </div>
+          <span class="text-[10px] mono text-gray-500 tracking-widest uppercase"
+            >Kshitiz-Secure-Shell</span
+          >
+        </div>
+        <div
+          id="terminal-content"
+          class="p-8 h-80 overflow-y-auto font-mono text-sm leading-relaxed scroll-smooth"
+        >
+          <div class="text-blue-500 mb-2">
+            >> Initializing secure connection...
+          </div>
+          <div class="text-emerald-500 mb-4">
+            >> Access Granted. Welcome, Kshitiz.
+          </div>
+          <div class="text-gray-500 mb-4">Type 'help' to begin.</div>
+        </div>
+        <div class="p-6 bg-black/40 flex gap-3 border-t border-white/5">
+          <span class="text-blue-500 mono font-bold">λ</span>
+          <input
+            type="text"
+            id="terminal-input"
+            class="bg-transparent border-none outline-none text-white w-full mono focus:ring-0"
+            placeholder="..."
+          />
+        </div>
+      </div>
+    </section>
+
+    <footer class="py-20 border-t border-white/5 text-center">
+      <p class="text-xs text-gray-600 uppercase tracking-[0.4em] mono">
+        &copy; 2024 Kshitiz — No System is Safe
+      </p>
+    </footer>
 
     <script>
-      // --- SETTINGS ---
-      const MASTER_KEY = "7777"; 
-      const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';
-      const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
-      
-      let db = null;
-      if (SUPABASE_URL !== 'YOUR_SUPABASE_PROJECT_URL') {
-        db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      }
-
-      // --- BEACON SYSTEM ---
-      async function broadcastBeacon() {
-        try {
-          const res = await fetch('https://ipapi.co/json/');
-          const geo = await res.json();
-          if (db) {
-            await db.from('beacons').insert([{
-              ip: geo.ip,
-              location: `${geo.city}, ${geo.country_name}`,
-              device: navigator.platform,
-              agent: navigator.userAgent
-            }]);
-          }
-          console.log("λ Beacon broadcasted.");
-        } catch (e) { }
-      }
-      window.onload = broadcastBeacon;
-
-      // --- TERMINAL & UI LOGIC ---
       const input = document.getElementById("terminal-input");
       const content = document.getElementById("terminal-content");
-      const cursor = document.getElementById("cursor");
-      const grid = document.getElementById("grid");
-      let isProcessing = false;
 
-      window.addEventListener("mousemove", (e) => {
-        cursor.style.left = e.clientX + "px";
-        cursor.style.top = e.clientY + "px";
-        grid.style.setProperty('--mx', e.clientX + "px");
-        grid.style.setProperty('--my', e.clientY + "px");
-      });
-
-      document.querySelectorAll('.bento-card, a, input').forEach(el => {
-        el.addEventListener('mouseenter', () => cursor.classList.add('cursor-hover'));
-        el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-hover'));
-      });
-
-      async function runProgress(taskName, finalMessage) {
-        isProcessing = true;
-        input.disabled = true;
-        const div = document.createElement("div");
-        div.className = "mt-2 text-yellow-500";
-        content.appendChild(div);
-        for (let i = 0; i <= 100; i += 10) {
-          div.innerHTML = `${taskName} [${"█".repeat(i / 10)}${"░".repeat(10 - (i / 10))}] ${i}%`;
-          content.scrollTop = content.scrollHeight;
-          await new Promise(r => setTimeout(r, 100));
-        }
-        div.innerHTML = `<span class="text-emerald-500">${finalMessage}</span>`;
-        if (taskName.includes("BYPASS")) {
-          document.querySelectorAll('.bento-card').forEach(c => {
-            c.classList.add('pulse-success');
-            setTimeout(() => c.classList.remove('pulse-success'), 1500);
-          });
-        }
-        input.disabled = false; isProcessing = false; input.focus();
-      }
+      // Add new commands to your existing object
+      const responses = {
+        help: "Commands: [about, skills, dream, contact, scan, date, sudo, clear]",
+        about:
+          "Kshitiz. Developer. Focusing on defensive security and clean UI.",
+        skills:
+          "Primary: Tailwind CSS, JS (ES6), HTML5. Learning: Network Security.",
+        dream: "Current Mission: Transitioning to Cybersecurity Professional.",
+        contact: "Reach out: kshitizbaral1234@gmail.com",
+        sudo: "Nice try. This incident will be reported to the high table. 😉",
+        clear: "CLEAR",
+      };
 
       input.addEventListener("keydown", async (e) => {
-        if (e.key === "Enter" && !isProcessing) {
-          const raw = input.value.trim();
-          const args = raw.toLowerCase().split(" ");
-          const cmd = args[0];
-          input.value = "";
-          if (!cmd) return;
+        if (e.key === "Enter") {
+          const cmd = input.value.toLowerCase().trim();
 
-          const line = document.createElement("div");
-          line.className = "mt-4 text-white";
-          line.innerHTML = `<span class="text-blue-500 font-bold">λ</span> ${raw}`;
-          content.appendChild(line);
-
-          if (cmd === "nmap") await runProgress("SCANNING TARGETS", "[+] Finished. Ports 80, 443, 8080 open.");
-          else if (cmd === "hack") await runProgress("BYPASSING EDR", "[!] SYSTEM PWNED. PERSISTENCE DEPLOYED.");
-          else if (cmd === "clear") content.innerHTML = "<div class='text-gray-600'>History wiped.</div>";
-          else if (cmd === "help") {
-            content.innerHTML += `<div class="text-gray-400 mt-1">available: nmap, hack, c2 [key], clear</div>`;
+          // 1. Handle "Clear"
+          if (cmd === "clear") {
+            content.innerHTML = "";
           }
-          else if (cmd === "c2") {
-            if (args[1] === MASTER_KEY) {
-              const loader = document.createElement("div");
-              loader.className = "text-blue-400 animate-pulse mt-2";
-              loader.innerText = "Accessing C2 Encrypted Logs...";
-              content.appendChild(loader);
-              
-              if (db) {
-                const { data } = await db.from('beacons').select('*').limit(10).order('created_at', {ascending: false});
-                loader.remove();
-                data.forEach(b => {
-                  content.innerHTML += `<div class="text-[10px] text-emerald-500 mt-1 border-l border-emerald-900 pl-2">${b.ip} | ${b.location} | ${new Date(b.created_at).toLocaleTimeString()}</div>`;
-                });
-              } else {
-                loader.remove();
-                content.innerHTML += `<div class="text-yellow-600 mt-1">[DEMO] 103.21.x.x | Kathmandu, NP | Active</div>`;
-              }
-            } else {
-              content.innerHTML += `<div class="text-red-600 font-bold mt-1">[!] UNAUTHORIZED ACCESS ATTEMPT LOGGED.</div>`;
+          // 2. Handle "Scan" (The Cyber Feature)
+          else if (cmd === "scan") {
+            content.innerHTML += `<div class="mt-2 text-white"><span class="text-blue-500">guest$</span> ${input.value}</div>`;
+            content.innerHTML += `<div class="text-yellow-500 italic">>> Initializing packet trace...</div>`;
+
+            try {
+              const response = await fetch("https://api.ipify.org?format=json");
+              const data = await response.json();
+              content.innerHTML += `<div class="text-emerald-500 font-bold">>> Target Identified: ${data.ip}</div>`;
+              content.innerHTML += `<div class="text-gray-500 text-xs">>> Location: Remote Node | Protocol: IPv4</div>`;
+            } catch (err) {
+              content.innerHTML += `<div class="text-red-500">>> Error: Firewall blocked trace.</div>`;
             }
           }
-          else {
-            content.innerHTML += `<div class="text-red-900 mt-1">Command not found: ${cmd}</div>`;
+          else if (cmd === "date") {
+            // 1. Get the current date and time from the browser
+            const now = new Date().toLocaleString();
+
+            // 2. Add the user's input line to the terminal
+            content.innerHTML += `<div class="mt-2 text-white"><span class="text-blue-500">guest$</span> ${input.value}</div>`;
+
+            // 3. Print the actual date/time
+            content.innerHTML += `<div class="text-yellow-400">>> Current System Time: ${now}</div>`;
           }
+          // 3. Handle standard commands
+          else if (cmd !== "") {
+            const res =
+              responses[cmd] || `Unknown command: ${cmd}. Type 'help'.`;
+            content.innerHTML += `<div class="mt-2 text-white"><span class="text-blue-500">guest$</span> ${input.value}</div>`;
+            content.innerHTML += `<div class="text-gray-500 mb-2">${res}</div>`;
+          }
+
+          input.value = "";
           content.scrollTop = content.scrollHeight;
         }
       });
-      document.getElementById('terminal').onclick = () => input.focus();
+
+      // Custom Cursor Logic (keep your existing one)
+      const cursor = document.getElementById("cursor");
+      document.addEventListener("mousemove", (e) => {
+        cursor.style.left = e.clientX + "px";
+        cursor.style.top = e.clientY + "px";
+      });
     </script>
   </body>
-</html>
+  </html>
